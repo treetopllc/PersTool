@@ -1,12 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Field, reduxForm, formValueSelector, propTypes } from 'redux-form';
 import {
-  Button, Form, Input, Select,
+  Field,
+  reduxForm,
+  formValueSelector,
+  propTypes,
+} from 'redux-form';
+import {
+  Button,
+  Form,
+  Input,
+  Select,
 } from 'semantic-ui-react';
 import {
-  func, number, string, bool, oneOf, shape, arrayOf, object,
+  func,
+  number,
+  string,
+  bool,
+  oneOfType,
+  shape,
+  arrayOf,
+  object,
 } from 'prop-types';
+import { numericality } from 'redux-form-validators';
 
 
 const InputField = ({
@@ -50,7 +66,7 @@ InputField.propTypes = {
     onFocus: func.isRequired,
     onDrop: func,
     name: string.isRequired,
-    value: oneOf(string, number),
+    value: oneOfType([string, number]),
   }).isRequired,
   id: string,
   type: string.isRequired,
@@ -61,7 +77,7 @@ InputField.propTypes = {
 
 InputField.defaultProps = {
   id: 'textinput',
-  label: '',
+  label: null,
   placeholder: '',
   fluid: false,
 };
@@ -103,7 +119,7 @@ SelectField.propTypes = {
     onFocus: func.isRequired,
     onDrop: func,
     name: string.isRequired,
-    value: oneOf(string, number),
+    value: oneOfType([string, number]),
   }).isRequired,
   id: string,
   options: arrayOf(object).isRequired,
@@ -120,7 +136,7 @@ SelectField.defaultProps = {
 
 const TestForm = (props) => {
   const {
-    questionValue,
+    questionValue = '',
     handleSubmit,
     pristine,
     reset,
@@ -186,6 +202,7 @@ const TestForm = (props) => {
               type="number"
               placeholder="Pay"
               parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              validate={numericality({ '>': 720.881725 })}
             />
           </label>
         </div>
@@ -274,7 +291,11 @@ const TestForm = (props) => {
 
 TestForm.propTypes = {
   ...propTypes,
-  questionValue: number.isRequired,
+  questionValue: number,
+};
+
+TestForm.defaultProps = {
+  questionValue: 0,
 };
 
 const TestFormContainer = reduxForm({
