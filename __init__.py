@@ -169,4 +169,5 @@ def post():
     resp2 = data.tolist()
     return jsonify(resp)
 
-app.run()
+if __name__ == "__main__":
+    app.run()
