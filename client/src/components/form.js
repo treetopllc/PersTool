@@ -23,6 +23,7 @@ import {
   object,
 } from 'prop-types';
 import { numericality } from 'redux-form-validators';
+import styled from 'styled-components';
 
 
 const InputField = ({
@@ -133,6 +134,15 @@ SelectField.defaultProps = {
   fluid: false,
 };
 
+const StyledFieldWrapper  = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+const StyledLabel = styled.label`
+  width: 100%;
+  margin: 10px;
+`;
 
 const TestForm = (props) => {
   const {
@@ -151,7 +161,7 @@ const TestForm = (props) => {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <label htmlFor="question">
+      <StyledLabel htmlFor="question">
         Type
         <Field
           name="question"
@@ -160,10 +170,10 @@ const TestForm = (props) => {
           options={options}
           component={SelectField}
         />
-      </label>
+      </StyledLabel>
       {questionValue === 1 && (
         <div>
-          <label htmlFor="amperiod">
+          <StyledLabel htmlFor="amperiod">
         Years
             <Field
               name="amperiod"
@@ -173,12 +183,12 @@ const TestForm = (props) => {
               placeholder="Years"
               parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
             />
-          </label>
+          </StyledLabel>
         </div>
       )}
       {questionValue === 2 && (
         <div>
-          <label htmlFor="contribution_rate">
+          <StyledLabel htmlFor="contribution_rate">
         Contribution Rate
             <Field
               name="contribution_rate"
@@ -188,12 +198,12 @@ const TestForm = (props) => {
               placeholder="Contribution Rate"
               parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
             />
-          </label>
+          </StyledLabel>
         </div>
       )}
       {questionValue === 3 && (
         <div>
-          <label htmlFor="pay">
+          <StyledLabel htmlFor="pay">
           Pay
             <Field
               name="pay"
@@ -204,13 +214,13 @@ const TestForm = (props) => {
               parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
               validate={numericality({ '>': 720.881725 })}
             />
-          </label>
+          </StyledLabel>
         </div>
       )}
 
       <Form.Group>
-        <div className="try" style={{ display: 'flex', width: '100%' }}>
-          <label htmlFor="ual" style={{ width: '100%', margin: '10px' }}>
+        <StyledFieldWrapper>
+          <StyledLabel htmlFor="ual">
           Unfunded Accrued Liability
             <Field
               name="ual"
@@ -220,10 +230,10 @@ const TestForm = (props) => {
               placeholder="UAL"
               parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
             />
-          </label>
-        </div>
-        <div className="try" style={{ display: 'flex', width: '100%' }}>
-          <label htmlFor="sual" style={{ width: '100%', margin: '10px' }}>
+          </StyledLabel>
+        </StyledFieldWrapper>
+        <StyledFieldWrapper>
+          <StyledLabel htmlFor="sual">
           Sequestered UAL
             <Field
               style={{ display: 'flex' }}
@@ -234,48 +244,50 @@ const TestForm = (props) => {
               placeholder="Sequestered UAL"
               parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
             />
-          </label>
-        </div>
+          </StyledLabel>
+        </StyledFieldWrapper>
       </Form.Group>
-      <div>
-        <label htmlFor="RR">
-        Inflation Adjusted Rate of Return
-          <Field
-            name="RR"
-            id="RR"
-            component={InputField}
-            type="number"
-            placeholder="Rate of Return"
-            parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
-          />
-        </label>
-      </div>
-      <div>
-        <label htmlFor="inflation">
-        Inflation Rate
-          <Field
-            name="inflation"
-            id="inflation"
-            component={InputField}
-            type="number"
-            placeholder="Inflation Rate"
-            parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
-          />
-        </label>
-      </div>
-      <div>
-        <label htmlFor="tax">
-        Tax Per Year
-          <Field
-            name="tax"
-            id="tax"
-            component={InputField}
-            type="number"
-            placeholder="Tax Per Year"
-            parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
-          />
-        </label>
-      </div>
+      <Form.Group>
+        <StyledFieldWrapper>
+          <StyledLabel htmlFor="RR">
+          Inflation Adjusted Rate of Return
+            <Field
+              name="RR"
+              id="RR"
+              component={InputField}
+              type="number"
+              placeholder="Rate of Return"
+              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+            />
+          </StyledLabel>
+        </StyledFieldWrapper>
+        <StyledFieldWrapper>
+          <StyledLabel htmlFor="inflation">
+          Inflation Rate
+            <Field
+              name="inflation"
+              id="inflation"
+              component={InputField}
+              type="number"
+              placeholder="Inflation Rate"
+              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+            />
+          </StyledLabel>
+        </StyledFieldWrapper>
+        <StyledFieldWrapper>
+          <StyledLabel htmlFor="tax">
+          Tax Per Year
+            <Field
+              name="tax"
+              id="tax"
+              component={InputField}
+              type="number"
+              placeholder="Tax Per Year"
+              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+            />
+          </StyledLabel>
+        </StyledFieldWrapper>
+      </Form.Group>
 
       <div>
         <Button type="submit" disabled={pristine || submitting}>

@@ -21,7 +21,7 @@ module.exports = {
     "rules": {
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
         "jsx-a11y/label-has-associated-control": [ 2, {
-            "labelComponents": ["CustomLabel"],
+            "labelComponents": ["StyledLabel"],
             "labelAttributes": ["inputLabel"],
             "controlComponents": ["Field", "Form.Field", "Checkbox", "Select", "Input"],
             "assert": "either",
