@@ -1,39 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Field, reduxForm, formValueSelector } from 'redux-form';
+import { Field, reduxForm, formValueSelector, propTypes } from 'redux-form';
 import {
-  Button, Checkbox, Form, Input, Select, Grid,
+  Button, Form, Input, Select,
 } from 'semantic-ui-react';
+import {
+  func, number, string, bool, oneOf, shape, arrayOf, object,
+} from 'prop-types';
 
-
-const CheckboxField = ({
-  id,
-  label,
-  input: {
-    onBlur,
-    onDrop,
-    onFocus,
-    name,
-    onChange,
-    checked,
-  },
-}) => (
-  <Form.Field>
-    <Checkbox
-      onBlur={onBlur}
-      onDrop={onDrop}
-      onFocus={onFocus}
-      name={name}
-      checked={checked}
-      onChange={(param, data) => onChange(data.checked)}
-      label={label}
-      id={id || name}
-    />
-  </Form.Field>
-);
 
 const InputField = ({
-  id,
   placeholder,
   label,
   type,
@@ -46,6 +22,7 @@ const InputField = ({
     onChange,
     value,
   },
+  id = name,
   ...rest
 }) => (
   <Form.Field>
@@ -65,6 +42,29 @@ const InputField = ({
     />
   </Form.Field>
 );
+
+InputField.propTypes = {
+  input: shape({
+    onBlur: func.isRequired,
+    onChange: func.isRequired,
+    onFocus: func.isRequired,
+    onDrop: func,
+    name: string.isRequired,
+    value: oneOf(string, number),
+  }).isRequired,
+  id: string,
+  type: string.isRequired,
+  label: string,
+  placeholder: string,
+  fluid: bool,
+};
+
+InputField.defaultProps = {
+  id: 'textinput',
+  label: '',
+  placeholder: '',
+  fluid: false,
+};
 
 const SelectField = ({
   id,
@@ -96,11 +96,31 @@ const SelectField = ({
   </Form.Field>
 );
 
+SelectField.propTypes = {
+  input: shape({
+    onBlur: func.isRequired,
+    onChange: func.isRequired,
+    onFocus: func.isRequired,
+    onDrop: func,
+    name: string.isRequired,
+    value: oneOf(string, number),
+  }).isRequired,
+  id: string,
+  options: arrayOf(object).isRequired,
+  placeholder: string,
+  fluid: bool,
+};
+
+SelectField.defaultProps = {
+  id: 'textinput',
+  placeholder: '',
+  fluid: false,
+};
+
 
 const TestForm = (props) => {
   const {
     questionValue,
-    fullName,
     handleSubmit,
     pristine,
     reset,
@@ -135,7 +155,7 @@ const TestForm = (props) => {
               component={InputField}
               type="number"
               placeholder="Years"
-              parse={val => (isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
             />
           </label>
         </div>
@@ -150,7 +170,7 @@ const TestForm = (props) => {
               component={InputField}
               type="number"
               placeholder="Contribution Rate"
-              parse={val => (isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
             />
           </label>
         </div>
@@ -165,7 +185,7 @@ const TestForm = (props) => {
               component={InputField}
               type="number"
               placeholder="Pay"
-              parse={val => (isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
             />
           </label>
         </div>
@@ -181,7 +201,7 @@ const TestForm = (props) => {
               component={InputField}
               type="number"
               placeholder="UAL"
-              parse={val => (isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
             />
           </label>
         </div>
@@ -195,7 +215,7 @@ const TestForm = (props) => {
               component={InputField}
               type="number"
               placeholder="Sequestered UAL"
-              parse={val => (isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
             />
           </label>
         </div>
@@ -209,7 +229,7 @@ const TestForm = (props) => {
             component={InputField}
             type="number"
             placeholder="Rate of Return"
-            parse={val => (isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+            parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
           />
         </label>
       </div>
@@ -222,7 +242,7 @@ const TestForm = (props) => {
             component={InputField}
             type="number"
             placeholder="Inflation Rate"
-            parse={val => (isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+            parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
           />
         </label>
       </div>
@@ -235,7 +255,7 @@ const TestForm = (props) => {
             component={InputField}
             type="number"
             placeholder="Tax Per Year"
-            parse={val => (isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+            parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
           />
         </label>
       </div>
@@ -243,8 +263,6 @@ const TestForm = (props) => {
       <div>
         <Button type="submit" disabled={pristine || submitting}>
           Submit
-          {' '}
-          {fullName}
         </Button>
         <Button type="button" disabled={pristine || submitting} onClick={reset}>
           Clear Values
@@ -252,6 +270,11 @@ const TestForm = (props) => {
       </div>
     </Form>
   );
+};
+
+TestForm.propTypes = {
+  ...propTypes,
+  questionValue: number.isRequired,
 };
 
 const TestFormContainer = reduxForm({
