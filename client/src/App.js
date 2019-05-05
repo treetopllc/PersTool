@@ -53,22 +53,22 @@ function App() {
         <Grid.Row>
           <Grid.Column width={8}>
           Pay:
-            {state.pay.length ? <VictoryBar data={state.pay} x="year" y="pay" /> : ''}
+            {state.pay.length ? <VictoryBar data={state.pay} x="year" y="pay" /> : <VictoryBar />}
           </Grid.Column>
           <Grid.Column width={8}>
           UAL:
-            {state.ual.length ? <VictoryBar data={state.ual} x="year" y="ual" /> : ''}
+            {state.ual.length ? <VictoryBar data={state.ual} x="year" y="ual" /> : <VictoryBar />}
           </Grid.Column>
         </Grid.Row>
 
         <Grid.Row>
           <Grid.Column width={8}>
           RATE:
-            {state.contribution_rate.length ? <VictoryBar data={state.contribution_rate} x="year" y="contribution_rate" /> : ''}
+            {state.contribution_rate.length ? <VictoryBar data={state.contribution_rate} x="year" y="contribution_rate" /> : <VictoryBar />}
           </Grid.Column>
           <Grid.Column width={8}>
           COST:
-            {state.normal_cost.length ? <VictoryBar data={state.normal_cost} x="year" y="normal_cost" /> : ''}
+            {state.normal_cost.length ? <VictoryBar data={state.normal_cost} x="year" y="normal_cost" /> : <VictoryBar />}
           </Grid.Column>
         </Grid.Row>
       </Grid>
