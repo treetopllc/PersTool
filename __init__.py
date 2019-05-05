@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, jsonify, json, g
+from flask import Flask, request, jsonify, make_response
+from flask_cors import CORS
+from flask_api import status
 import numpy as np
 import pandas
-from flask_cors import CORS
 import logging
 
 app = Flask(__name__)
@@ -167,7 +168,7 @@ def post():
     if data.shape[0] < 15:
         data = np.pad(data, ((0, 15 -  data.shape[0]),(0,0)), 'constant')
     resp2 = data.tolist()
-    return jsonify(resp)
+    return make_response(jsonify(resp), status.HTTP_200_OK)
 
 if __name__ == "__main__":
     app.run()

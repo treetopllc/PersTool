@@ -13,7 +13,7 @@ function App() {
     ual: [],
     contribution_rate: [],
     normal_cost: [],
-  }); // move to redux
+  }); // move to redux?
   const handleSubmit = (values) => {
     axios.post('/api', { data: values })
       .then((response) => {
@@ -34,7 +34,7 @@ function App() {
           ...dataset.filter(item => item.normal_cost)[0],
           year: index,
         }));
-        console.log(payArray, ualArray);
+        console.log(payArray, ualArray, rateArray, costArray);
         setData({
           pay: payArray,
           ual: ualArray,

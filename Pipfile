@@ -11,6 +11,7 @@ pandas = "*"
 flask = "*"
 flask-cors = "*"
 matplotlib = "*"
+flask-api = "*"
 
 [requires]
 python_version = "3.7"
