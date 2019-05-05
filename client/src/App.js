@@ -14,7 +14,7 @@ function App() {
     normal_cost: [],
   }); // move to redux
   const handleSubmit = (values) => {
-    axios.post('http://127.0.0.1:5000/api', { data: values })
+    axios.post('/api', { data: values })
       .then((response) => {
         console.log(response);
         const payArray = response.data.map((dataset, index) => ({
