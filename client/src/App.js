@@ -56,7 +56,7 @@ function App() {
             <VictoryStack>
               <VictoryBar
                 data={[{ x: 'a', y: 2 }, { x: 'b', y: 3 }, { x: 'c', y: 5 }]}
-                style={{ data: { fill: '#f58220', fillOpacity: 0.7 } }}
+                style={{ data: { fill: '#AF519C', fillOpacity: 0.7 } }}
               />
               <VictoryBar
                 data={[{ x: 'a', y: 1 }, { x: 'b', y: 4 }, { x: 'c', y: 5 }]}
@@ -64,7 +64,7 @@ function App() {
               />
               <VictoryBar
                 data={[{ x: 'a', y: 3 }, { x: 'b', y: 2 }, { x: 'c', y: 6 }]}
-                style={{ data: { fill: 'black', fillOpacity: 0.7 } }}
+                style={{ data: { fill: '#52c2c8', fillOpacity: 0.7 } }}
               />
             </VictoryStack>
           </Grid.Column>

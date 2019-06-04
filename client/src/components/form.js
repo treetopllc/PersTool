@@ -35,6 +35,7 @@ const StyledFieldWrapper = styled.div`
 const StyledLabel = styled.label`
   width: 100%;
   margin: 10px;
+  font-family: 'Fjalla One', sans-serif;
 `;
 
 const InputField = ({
@@ -137,6 +138,7 @@ const SliderField = ({
           value={value}
           color="red"
           settings={settings}
+          style={{ trackFill: { backgroundColor: '#AF519C' } }}
         />
       </StyledLabel>
     </Form.Field>
@@ -372,8 +374,10 @@ TestForm.defaultProps = {
 };
 
 const TestFormContainer = reduxForm({
-  // a unique name for the form
-  form: 'test',
+  form: 'test', // a unique name for the form
+  initialValues: {
+    test: 50,
+  },
 })(TestForm);
 
 // Decorate with connect to read form values
