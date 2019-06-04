@@ -12,6 +12,7 @@ import {
   Input,
   Select,
 } from 'semantic-ui-react';
+import { Slider } from 'react-semantic-ui-range';
 import {
   func,
   number,
@@ -25,6 +26,16 @@ import {
 import { numericality } from 'redux-form-validators';
 import styled from 'styled-components';
 
+
+const StyledFieldWrapper = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+const StyledLabel = styled.label`
+  width: 100%;
+  margin: 10px;
+`;
 
 const InputField = ({
   placeholder,
@@ -83,6 +94,56 @@ InputField.defaultProps = {
   fluid: false,
 };
 
+const SliderField = ({
+  id,
+  placeholder,
+  options,
+  fluid,
+  input: {
+    onBlur,
+    onDrop,
+    onFocus,
+    name,
+    onChange,
+    value,
+  },
+}) => {
+  // const [inputValue, setValue] = useState(5);
+  const settings = {
+    value,
+    min: 0,
+    max: 100,
+    step: 1,
+    onChange,
+  };
+
+  const handleValueChange = (e) => {
+    let inputValue = parseInt(e.target.value, 10);
+    if (!inputValue) {
+      inputValue = 0;
+    }
+    onChange(e.target.value);
+  };
+
+  return (
+    <Form.Field>
+      <Input placeholder="Enter Value" onChange={handleValueChange} />
+      <StyledLabel color="red">
+        {value}
+        <Slider
+          onBlur={onBlur}
+          onDrop={onDrop}
+          onFocus={onFocus}
+          value={value}
+          color="red"
+          settings={settings}
+        />
+      </StyledLabel>
+    </Form.Field>
+  );
+};
+
+
 const SelectField = ({
   id,
   placeholder,
@@ -134,16 +195,6 @@ SelectField.defaultProps = {
   fluid: false,
 };
 
-const StyledFieldWrapper  = styled.div`
-  display: flex;
-  width: 100%;
-`;
-
-const StyledLabel = styled.label`
-  width: 100%;
-  margin: 10px;
-`;
-
 const TestForm = (props) => {
   const {
     questionValue = '',
@@ -161,6 +212,16 @@ const TestForm = (props) => {
 
   return (
     <Form onSubmit={handleSubmit}>
+      <StyledLabel htmlFor="test">
+        test
+        <Field
+          name="test"
+          id="test"
+          placeholder="Test"
+          options={options}
+          component={SliderField}
+        />
+      </StyledLabel>
       <StyledLabel htmlFor="question">
         Type
         <Field

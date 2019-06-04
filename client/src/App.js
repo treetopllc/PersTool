@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { VictoryBar } from 'victory';
+import { VictoryBar, VictoryStack } from 'victory';
 
 import 'semantic-ui-css/semantic.min.css';
 import { Container, Grid } from 'semantic-ui-react';
@@ -53,8 +53,20 @@ function App() {
       <Grid>
         <Grid.Row>
           <Grid.Column width={8}>
-          Pay:
-            {state.pay.length ? <VictoryBar data={state.pay} x="year" y="pay" /> : <VictoryBar />}
+            <VictoryStack>
+              <VictoryBar
+                data={[{ x: 'a', y: 2 }, { x: 'b', y: 3 }, { x: 'c', y: 5 }]}
+                style={{ data: { fill: '#f58220', fillOpacity: 0.7 } }}
+              />
+              <VictoryBar
+                data={[{ x: 'a', y: 1 }, { x: 'b', y: 4 }, { x: 'c', y: 5 }]}
+                style={{ data: { fill: '#9bb645', fillOpacity: 0.7 } }}
+              />
+              <VictoryBar
+                data={[{ x: 'a', y: 3 }, { x: 'b', y: 2 }, { x: 'c', y: 6 }]}
+                style={{ data: { fill: 'black', fillOpacity: 0.7 } }}
+              />
+            </VictoryStack>
           </Grid.Column>
           <Grid.Column width={8}>
           UAL:
