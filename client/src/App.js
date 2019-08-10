@@ -4,84 +4,98 @@ import { VictoryBar, VictoryStack } from 'victory';
 
 import 'semantic-ui-css/semantic.min.css';
 import { Container, Grid } from 'semantic-ui-react';
-
+import { createGlobalStyle } from 'styled-components';
 import TestForm from './components/form';
 
+
+const GlobalStyle = createGlobalStyle`
+  body, input {
+    font-family: 'Libre Franklin', sans-serif !important;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Fjalla One', sans-serif !important;
+  }
+`;
+
+
 function App() {
-  const [state, setData] = useState({
-    pay: [],
-    ual: [],
-    contribution_rate: [],
-    normal_cost: [],
-  }); // move to redux?
+  const [state, setData] = useState([]); // move to redux?
   const handleSubmit = (values) => {
     axios.post('/api', { data: values })
       .then((response) => {
-        console.log(response);
-        const payArray = response.data.map((dataset, index) => ({
-          ...dataset.filter(item => item.pay)[0],
-          year: index,
-        }));
-        const ualArray = response.data.map((dataset, index) => ({
-          ...dataset.filter(item => item.ual)[0],
-          year: index,
-        }));
-        const rateArray = response.data.map((dataset, index) => ({
-          ...dataset.filter(item => item.contribution_rate)[0],
-          year: index,
-        }));
-        const costArray = response.data.map((dataset, index) => ({
-          ...dataset.filter(item => item.normal_cost)[0],
-          year: index,
-        }));
-        console.log(payArray, ualArray, rateArray, costArray);
+        const payArray = [];
+        const normalCostArray = [];
+        const ualArray = [];
+        const pobArray = [];
+        // eslint-disable-next-line camelcase
+        response.data.forEach(({ normal_cost, ual, sual, pob, payment, year }) => {
+          payArray.push({
+            payment,
+            year,
+          });
+
+          pobArray.push({
+            pob: pob || 0,
+            year,
+          });
+
+          normalCostArray.push({
+            normal_cost,
+            year,
+          });
+
+          ualArray.push({
+            ual,
+            year,
+          });
+        });
         setData({
-          pay: payArray,
-          ual: ualArray,
-          contribution_rate: rateArray,
-          normal_cost: costArray,
+          payArray,
+          pobArray,
+          normalCostArray,
+          ualArray,
         });
       })
       .catch((error) => {
-        console.log(error);
+        throw error;
       });
-    console.log(values);
   };
   return (
     <Container style={{ margin: 20 }}>
-      <TestForm onSubmit={handleSubmit} />
+      <GlobalStyle />
       <Grid>
         <Grid.Row>
           <Grid.Column width={8}>
+            <TestForm onSubmit={handleSubmit} />
+          </Grid.Column>
+          <Grid.Column width={8}>
             <VictoryStack>
               <VictoryBar
-                data={[{ x: 'a', y: 2 }, { x: 'b', y: 3 }, { x: 'c', y: 5 }]}
-                style={{ data: { fill: '#AF519C', fillOpacity: 0.7 } }}
-              />
-              <VictoryBar
-                data={[{ x: 'a', y: 1 }, { x: 'b', y: 4 }, { x: 'c', y: 5 }]}
+                x="year"
+                y="normal_cost"
+                data={state.normalCostArray}
                 style={{ data: { fill: '#9bb645', fillOpacity: 0.7 } }}
               />
               <VictoryBar
-                data={[{ x: 'a', y: 3 }, { x: 'b', y: 2 }, { x: 'c', y: 6 }]}
+                x="year"
+                y="payment"
+                data={state.payArray}
+                style={{ data: { fill: '#AF519C', fillOpacity: 0.7 } }}
+              />
+              <VictoryBar
+                x="year"
+                y="pob"
+                data={state.pobArray}
                 style={{ data: { fill: '#52c2c8', fillOpacity: 0.7 } }}
               />
+              <VictoryBar
+                x="year"
+                y="ual"
+                data={state.ualArray}
+                style={{ data: { fill: '#AAAAAA', fillOpacity: 0.7 } }}
+              />
             </VictoryStack>
-          </Grid.Column>
-          <Grid.Column width={8}>
-          UAL:
-            {state.ual.length ? <VictoryBar data={state.ual} x="year" y="ual" /> : <VictoryBar />}
-          </Grid.Column>
-        </Grid.Row>
-
-        <Grid.Row>
-          <Grid.Column width={8}>
-          RATE:
-            {state.contribution_rate.length ? <VictoryBar data={state.contribution_rate} x="year" y="contribution_rate" /> : <VictoryBar />}
-          </Grid.Column>
-          <Grid.Column width={8}>
-          COST:
-            {state.normal_cost.length ? <VictoryBar data={state.normal_cost} x="year" y="normal_cost" /> : <VictoryBar />}
           </Grid.Column>
         </Grid.Row>
       </Grid>

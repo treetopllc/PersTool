@@ -214,12 +214,12 @@ const TestForm = (props) => {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <StyledLabel htmlFor="test">
-        test
+      <StyledLabel htmlFor="sliderOne">
+      sliderOne
         <Field
-          name="test"
-          id="test"
-          placeholder="Test"
+          name="sliderOne"
+          id="sliderOne"
+          placeholder="sliderOne"
           options={options}
           component={SliderField}
         />
@@ -319,8 +319,11 @@ const TestForm = (props) => {
               id="RR"
               component={InputField}
               type="number"
+              min="0"
+              step=".0001"
+              max="2"
               placeholder="Rate of Return"
-              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              parse={val => (Number.isNaN(parseFloat(val, 10)) ? null : parseFloat(val, 10))}
             />
           </StyledLabel>
         </StyledFieldWrapper>
@@ -333,7 +336,7 @@ const TestForm = (props) => {
               component={InputField}
               type="number"
               placeholder="Inflation Rate"
-              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              parse={val => (Number.isNaN(parseFloat(val, 10)) ? null : parseFloat(val, 10))}
             />
           </StyledLabel>
         </StyledFieldWrapper>
@@ -376,7 +379,7 @@ TestForm.defaultProps = {
 const TestFormContainer = reduxForm({
   form: 'test', // a unique name for the form
   initialValues: {
-    test: 50,
+    sliderOne: 50,
   },
 })(TestForm);
 
@@ -387,9 +390,10 @@ const ConnectedTestForm = connect((state) => {
   // or together as a group
   const { firstName, lastName } = selector(state, 'firstName', 'lastName');
   return {
-    questionValue,
+    questionValue, // available as props on the form
     fullName: `${firstName || ''} ${lastName || ''}`,
   };
 })(TestFormContainer);
 
+// TODO: break this file up
 export default ConnectedTestForm;
