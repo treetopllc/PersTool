@@ -7,6 +7,8 @@ import {
   propTypes,
 } from 'redux-form';
 import {
+  Container,
+  Grid,
   Button,
   Form,
   Input,
@@ -23,18 +25,11 @@ import {
   arrayOf,
   object,
 } from 'prop-types';
-import { numericality } from 'redux-form-validators';
 import styled from 'styled-components';
 
 
-const StyledFieldWrapper = styled.div`
-  display: flex;
-  width: 100%;
-`;
-
 const StyledLabel = styled.label`
   width: 100%;
-  margin: 10px;
   font-family: 'Fjalla One', sans-serif;
 `;
 
@@ -96,10 +91,11 @@ InputField.defaultProps = {
 };
 
 const SliderField = ({
-  id,
-  placeholder,
-  options,
-  fluid,
+  label = "",
+  defaultValue,
+  min = 0,
+  max = 100,
+  step = 1,
   input: {
     onBlur,
     onDrop,
@@ -111,10 +107,10 @@ const SliderField = ({
 }) => {
   // const [inputValue, setValue] = useState(5);
   const settings = {
-    value,
-    min: 0,
-    max: 100,
-    step: 1,
+    start: defaultValue,
+    min,
+    max,
+    step,
     onChange,
   };
 
@@ -128,19 +124,20 @@ const SliderField = ({
 
   return (
     <Form.Field>
-      <Input placeholder="Enter Value" onChange={handleValueChange} />
-      <StyledLabel color="red">
+      <StyledLabel>
         {value}
-        <Slider
-          onBlur={onBlur}
-          onDrop={onDrop}
-          onFocus={onFocus}
-          value={value}
-          color="red"
-          settings={settings}
-          style={{ trackFill: { backgroundColor: '#AF519C' } }}
-        />
+        {label}
+
       </StyledLabel>
+      <Slider
+        onBlur={onBlur}
+        onDrop={onDrop}
+        onFocus={onFocus}
+        value={value}
+        name={name}
+        settings={settings}
+        style={{ trackFill: { backgroundColor: '#AF519C' } }}
+      />
     </Form.Field>
   );
 };
@@ -214,18 +211,10 @@ const TestForm = (props) => {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <StyledLabel htmlFor="sliderOne">
-      sliderOne
-        <Field
-          name="sliderOne"
-          id="sliderOne"
-          placeholder="sliderOne"
-          options={options}
-          component={SliderField}
-        />
-      </StyledLabel>
       <StyledLabel htmlFor="question">
-        Type
+        Text for Question
+        <br />
+        <small>Explanatory text for Question. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Morbi tincidunt ornare massa eget egestas purus.  </small>
         <Field
           name="question"
           id="question"
@@ -237,14 +226,15 @@ const TestForm = (props) => {
       {questionValue === 1 && (
         <div>
           <StyledLabel htmlFor="amperiod">
-        Years
             <Field
               name="amperiod"
               id="amperiod"
-              component={InputField}
-              type="number"
               placeholder="Years"
-              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              min={1}
+              max={50}
+              defaultValue={20}
+              label=" Years"
+              component={SliderField}
             />
           </StyledLabel>
         </div>
@@ -252,14 +242,15 @@ const TestForm = (props) => {
       {questionValue === 2 && (
         <div>
           <StyledLabel htmlFor="contribution_rate">
-        Contribution Rate
             <Field
               name="contribution_rate"
               id="contribution_rate"
-              component={InputField}
-              type="number"
               placeholder="Contribution Rate"
-              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
+              min={1}
+              max={50}
+              defaultValue={20}
+              label="Contribution Rate"
+              component={SliderField}
             />
           </StyledLabel>
         </div>
@@ -267,93 +258,83 @@ const TestForm = (props) => {
       {questionValue === 3 && (
         <div>
           <StyledLabel htmlFor="pay">
-          Pay
             <Field
               name="pay"
               id="pay"
-              component={InputField}
-              type="number"
               placeholder="Pay"
-              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
-              validate={numericality({ '>': 720.881725 })}
+              min={1}
+              max={50}
+              defaultValue={20}
+              label="Pay"
+              component={SliderField}
             />
           </StyledLabel>
         </div>
       )}
 
-      <Form.Group>
-        <StyledFieldWrapper>
-          <StyledLabel htmlFor="ual">
-          Unfunded Accrued Liability
-            <Field
-              name="ual"
-              id="ual"
-              component={InputField}
-              type="number"
-              placeholder="UAL"
-              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
-            />
-          </StyledLabel>
-        </StyledFieldWrapper>
-        <StyledFieldWrapper>
-          <StyledLabel htmlFor="sual">
-          Sequestered UAL
-            <Field
-              style={{ display: 'flex' }}
-              name="sual"
-              id="sual"
-              component={InputField}
-              type="number"
-              placeholder="Sequestered UAL"
-              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
-            />
-          </StyledLabel>
-        </StyledFieldWrapper>
-      </Form.Group>
-      <Form.Group>
-        <StyledFieldWrapper>
-          <StyledLabel htmlFor="RR">
-          Inflation Adjusted Rate of Return
-            <Field
-              name="RR"
-              id="RR"
-              component={InputField}
-              type="number"
-              min="0"
-              step=".0001"
-              max="2"
-              placeholder="Rate of Return"
-              parse={val => (Number.isNaN(parseFloat(val, 10)) ? null : parseFloat(val, 10))}
-            />
-          </StyledLabel>
-        </StyledFieldWrapper>
-        <StyledFieldWrapper>
-          <StyledLabel htmlFor="inflation">
-          Inflation Rate
-            <Field
-              name="inflation"
-              id="inflation"
-              component={InputField}
-              type="number"
-              placeholder="Inflation Rate"
-              parse={val => (Number.isNaN(parseFloat(val, 10)) ? null : parseFloat(val, 10))}
-            />
-          </StyledLabel>
-        </StyledFieldWrapper>
-        <StyledFieldWrapper>
-          <StyledLabel htmlFor="tax">
-          Tax Per Year
-            <Field
-              name="tax"
-              id="tax"
-              component={InputField}
-              type="number"
-              placeholder="Tax Per Year"
-              parse={val => (Number.isNaN(parseInt(val, 10)) ? null : parseInt(val, 10))}
-            />
-          </StyledLabel>
-        </StyledFieldWrapper>
-      </Form.Group>
+      <StyledLabel htmlFor="ual">
+        <Field
+          name="ual"
+          id="ual"
+          placeholder="UAL"
+          min={10000}
+          max={40000}
+          defaultValue={26600}
+          label="Unfunded Accrued Liability"
+          component={SliderField}
+        />
+      </StyledLabel>
+      <StyledLabel htmlFor="sual">
+        <Field
+          name="sual"
+          id="sual"
+          placeholder="SUAL"
+          min={0}
+          max={50}
+          defaultValue={0}
+          label="Sequestered Unfunded Accrued Liability"
+          component={SliderField}
+        />
+      </StyledLabel>
+      <StyledLabel htmlFor="RR">
+        <Field
+          name="RR"
+          id="RR"
+          placeholder="Rate of Return"
+          min={1}
+          max={2}
+          defaultValue={1.042}
+          step={0.001}
+          label="Inflation Adjusted Rate of Return"
+          component={SliderField}
+        />
+      </StyledLabel>
+      <StyledLabel htmlFor="inflation">
+        <Field
+          name="inflation"
+          id="inflation"
+          placeholder="Inflation"
+          min={1}
+          max={2}
+          defaultValue={1.03}
+          step={0.01}
+          label="Inflation Rate"
+          component={SliderField}
+        />
+      </StyledLabel>
+      <StyledLabel htmlFor="tax">
+        <Field
+          name="tax"
+          id="tax"
+          placeholder="Tax Per Year"
+          min={0}
+          max={2}
+          defaultValue={0}
+          step={0.01}
+          label="Tax Per Year"
+          component={SliderField}
+        />
+      </StyledLabel>
 
       <div>
         <Button type="submit" disabled={pristine || submitting}>
@@ -373,13 +354,14 @@ TestForm.propTypes = {
 };
 
 TestForm.defaultProps = {
-  questionValue: 0,
+  questionValue: 1,
 };
 
 const TestFormContainer = reduxForm({
   form: 'test', // a unique name for the form
   initialValues: {
     sliderOne: 50,
+    question: 1,
   },
 })(TestForm);
 
@@ -387,13 +369,23 @@ const TestFormContainer = reduxForm({
 const selector = formValueSelector('test'); // <-- same as form name
 const ConnectedTestForm = connect((state) => {
   const questionValue = selector(state, 'question');
-  // or together as a group
-  const { firstName, lastName } = selector(state, 'firstName', 'lastName');
+
   return {
     questionValue, // available as props on the form
-    fullName: `${firstName || ''} ${lastName || ''}`,
   };
 })(TestFormContainer);
 
-// TODO: break this file up
 export default ConnectedTestForm;
+
+/* TODO:
+  - register defaultValues as initialValues
+  - break this file up
+  - update propTypes
+  - convert the select to pills/tabs
+  - defaultValues for the graph
+  - (API) error handling and validation
+  - (FE) error handling and validation
+  - move styles into their own file
+  - style padding and margins
+  - move hooks to redux
+  */

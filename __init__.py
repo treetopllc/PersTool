@@ -413,8 +413,6 @@ def post():
         resp.append(respobj)
         i += 1
 
-    # plotstuff(data, UAL_hist, normalcost_hist, UALpayment_hist, POB_hist, pob)
-
     return make_response(jsonify(resp), status.HTTP_200_OK)
 
 if __name__ == "__main__":

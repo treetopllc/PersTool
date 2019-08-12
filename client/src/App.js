@@ -9,7 +9,7 @@ import TestForm from './components/form';
 
 
 const GlobalStyle = createGlobalStyle`
-  body, input {
+  body, input, small {
     font-family: 'Libre Franklin', sans-serif !important;
   }
 
@@ -66,10 +66,10 @@ function App() {
       <GlobalStyle />
       <Grid>
         <Grid.Row>
-          <Grid.Column width={8}>
+          <Grid.Column width={16}>
             <TestForm onSubmit={handleSubmit} />
           </Grid.Column>
-          <Grid.Column width={8}>
+          <Grid.Column width={16}>
             <VictoryStack>
               <VictoryBar
                 x="year"
