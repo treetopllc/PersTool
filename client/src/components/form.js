@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Field,
@@ -7,14 +7,10 @@ import {
   propTypes,
 } from 'redux-form';
 import {
-  Container,
-  Grid,
   Button,
   Form,
-  Input,
-  Select,
+  Label,
 } from 'semantic-ui-react';
-import { Slider } from 'react-semantic-ui-range';
 import {
   func,
   number,
@@ -27,319 +23,350 @@ import {
 } from 'prop-types';
 import styled from 'styled-components';
 
+import CustomButtonInput from './Button';
+import SliderField from './Slider';
+
 
 const StyledLabel = styled.label`
   width: 100%;
   font-family: 'Fjalla One', sans-serif;
+
+  small {
+    margin: 10px;
+    display: inline-block;
+  }
 `;
 
-const InputField = ({
-  placeholder,
-  label,
-  type,
-  fluid,
-  input: {
-    onBlur,
-    onDrop,
-    onFocus,
-    name,
-    onChange,
-    value,
-  },
-  id = name,
-  ...rest
-}) => (
-  <Form.Field>
-    <Input
-      onBlur={onBlur}
-      onDrop={onDrop}
-      onFocus={onFocus}
-      name={name}
-      value={value}
-      onChange={(param, data) => onChange(data.value)}
-      label={label}
-      placeholder={placeholder}
-      id={id || name}
-      type={type}
-      fluid={fluid}
-      {...rest}
-    />
-  </Form.Field>
-);
+const StyledButtonGroup = styled.div`
+  display: flex;
+  flex: row wrap;
+  justify-content: space-between;
+  margin: 14px 10px;
+`;
 
-InputField.propTypes = {
-  input: shape({
-    onBlur: func.isRequired,
-    onChange: func.isRequired,
-    onFocus: func.isRequired,
-    onDrop: func,
-    name: string.isRequired,
-    value: oneOfType([string, number]),
-  }).isRequired,
-  id: string,
-  type: string.isRequired,
-  label: string,
-  placeholder: string,
-  fluid: bool,
-};
+const Row = styled.div`
+  margin: 20px 0;
 
-InputField.defaultProps = {
-  id: 'textinput',
-  label: null,
-  placeholder: '',
-  fluid: false,
-};
+  &:first-of-type {
+    margin-top: 50px;
+  }
 
-const SliderField = ({
-  label = "",
-  defaultValue,
-  min = 0,
-  max = 100,
-  step = 1,
-  input: {
-    onBlur,
-    onDrop,
-    onFocus,
-    name,
-    onChange,
-    value,
-  },
-}) => {
-  // const [inputValue, setValue] = useState(5);
-  const settings = {
-    start: defaultValue,
-    min,
-    max,
-    step,
-    onChange,
-  };
+  &:last-of-type {
+    margin-bottom: 50px;
+  }
 
-  const handleValueChange = (e) => {
-    let inputValue = parseInt(e.target.value, 10);
-    if (!inputValue) {
-      inputValue = 0;
-    }
-    onChange(e.target.value);
-  };
+`;
 
-  return (
-    <Form.Field>
-      <StyledLabel>
-        {value}
-        {label}
+const StyledRightLabel = styled(Label)`
+  float: right;
+  margin-right: 10px !important;
+  background-color: #9bb645 !important;
+  color: white !important;
+  font-family: 'Libre Franklin', sans-serif !important;
+`;
 
-      </StyledLabel>
-      <Slider
-        onBlur={onBlur}
-        onDrop={onDrop}
-        onFocus={onFocus}
-        value={value}
-        name={name}
-        settings={settings}
-        style={{ trackFill: { backgroundColor: '#AF519C' } }}
-      />
-    </Form.Field>
-  );
-};
-
-
-const SelectField = ({
-  id,
-  placeholder,
-  options,
-  fluid,
-  input: {
-    onBlur,
-    onDrop,
-    onFocus,
-    name,
-    onChange,
-    value,
-  },
-}) => (
-  <Form.Field>
-    <Select
-      onBlur={onBlur}
-      onDrop={onDrop}
-      onFocus={onFocus}
-      name={name}
-      value={value}
-      onChange={(param, data) => onChange(data.value)}
-      placeholder={placeholder}
-      options={options}
-      id={id || name}
-      fluid={fluid}
-    />
-  </Form.Field>
-);
-
-SelectField.propTypes = {
-  input: shape({
-    onBlur: func.isRequired,
-    onChange: func.isRequired,
-    onFocus: func.isRequired,
-    onDrop: func,
-    name: string.isRequired,
-    value: oneOfType([string, number]),
-  }).isRequired,
-  id: string,
-  options: arrayOf(object).isRequired,
-  placeholder: string,
-  fluid: bool,
-};
-
-SelectField.defaultProps = {
-  id: 'textinput',
-  placeholder: '',
-  fluid: false,
-};
+const SubmitButton = styled(Button)`
+  background-color: #52c2c8 !important;
+  color: white !important;
+`;
 
 const TestForm = (props) => {
   const {
-    questionValue = '',
+    questionValue,
+    amperiodValue,
+    contributionRateValue,
     handleSubmit,
     pristine,
     reset,
     submitting,
   } = props;
 
-  const options = [
-    { key: '1', text: 'Amortization period (1)', value: 1 },
-    { key: '2', text: 'Contribution rate (2)', value: 2 },
-    { key: '3', text: 'Annual pay (3)', value: 3 },
-  ];
-
   return (
     <Form onSubmit={handleSubmit}>
-      <StyledLabel htmlFor="question">
-        Text for Question
-        <br />
-        <small>Explanatory text for Question. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Morbi tincidunt ornare massa eget egestas purus.  </small>
-        <Field
-          name="question"
-          id="question"
-          placeholder="Question"
-          options={options}
-          component={SelectField}
-        />
-      </StyledLabel>
-      {questionValue === 1 && (
-        <div>
-          <StyledLabel htmlFor="amperiod">
+      <Row>
+        <StyledLabel htmlFor="question">
+          Method:
+          <StyledButtonGroup>
             <Field
-              name="amperiod"
-              id="amperiod"
-              placeholder="Years"
-              min={1}
-              max={50}
-              defaultValue={20}
-              label=" Years"
-              component={SliderField}
+              name="question"
+              id="question"
+              value="1"
+              inputvalue="1"
+              buttonvalue="Amortization period"
+              component={CustomButtonInput}
             />
-          </StyledLabel>
-        </div>
-      )}
-      {questionValue === 2 && (
-        <div>
-          <StyledLabel htmlFor="contribution_rate">
-            <Field
-              name="contribution_rate"
-              id="contribution_rate"
-              placeholder="Contribution Rate"
-              min={1}
-              max={50}
-              defaultValue={20}
-              label="Contribution Rate"
-              component={SliderField}
-            />
-          </StyledLabel>
-        </div>
-      )}
-      {questionValue === 3 && (
-        <div>
-          <StyledLabel htmlFor="pay">
-            <Field
-              name="pay"
-              id="pay"
-              placeholder="Pay"
-              min={1}
-              max={50}
-              defaultValue={20}
-              label="Pay"
-              component={SliderField}
-            />
-          </StyledLabel>
-        </div>
-      )}
 
-      <StyledLabel htmlFor="ual">
-        <Field
-          name="ual"
-          id="ual"
-          placeholder="UAL"
-          min={10000}
-          max={40000}
-          defaultValue={26600}
-          label="Unfunded Accrued Liability"
-          component={SliderField}
-        />
-      </StyledLabel>
-      <StyledLabel htmlFor="sual">
-        <Field
-          name="sual"
-          id="sual"
-          placeholder="SUAL"
-          min={0}
-          max={50}
-          defaultValue={0}
-          label="Sequestered Unfunded Accrued Liability"
-          component={SliderField}
-        />
-      </StyledLabel>
-      <StyledLabel htmlFor="RR">
-        <Field
-          name="RR"
-          id="RR"
-          placeholder="Rate of Return"
-          min={1}
-          max={2}
-          defaultValue={1.042}
-          step={0.001}
-          label="Inflation Adjusted Rate of Return"
-          component={SliderField}
-        />
-      </StyledLabel>
-      <StyledLabel htmlFor="inflation">
-        <Field
-          name="inflation"
-          id="inflation"
-          placeholder="Inflation"
-          min={1}
-          max={2}
-          defaultValue={1.03}
-          step={0.01}
-          label="Inflation Rate"
-          component={SliderField}
-        />
-      </StyledLabel>
-      <StyledLabel htmlFor="tax">
-        <Field
-          name="tax"
-          id="tax"
-          placeholder="Tax Per Year"
-          min={0}
-          max={2}
-          defaultValue={0}
-          step={0.01}
-          label="Tax Per Year"
-          component={SliderField}
-        />
-      </StyledLabel>
+            <Field
+              name="question"
+              id="question"
+              value="2"
+              inputvalue="2"
+              buttonvalue="Contribution rate"
+              component={CustomButtonInput}
+            />
+
+            <Field
+              name="question"
+              id="question"
+              value="3"
+              inputvalue="3"
+              buttonvalue="Directed Funding"
+              component={CustomButtonInput}
+            />
+          </StyledButtonGroup>
+        </StyledLabel>
+      </Row>
+
+      <Row>
+        {questionValue === 1 && (
+          <div>
+            <StyledLabel htmlFor="amperiod">
+              Years:
+              <StyledButtonGroup>
+                <Field
+                  name="amperiod"
+                  id="amperiod16"
+                  value="16"
+                  inputvalue="16"
+                  buttonvalue="16"
+                  component={CustomButtonInput}
+                />
+
+                <Field
+                  name="amperiod"
+                  id="amperiod22"
+                  value="22"
+                  inputvalue="22"
+                  buttonvalue="22"
+                  component={CustomButtonInput}
+                />
+
+                <Field
+                  name="amperiod"
+                  id="amperiod26"
+                  value="26"
+                  inputvalue="26"
+                  buttonvalue="26"
+                  component={CustomButtonInput}
+                />
+                <Field
+                  name="amperiod"
+                  id="amperiod30"
+                  value="30"
+                  inputvalue="30"
+                  buttonvalue="30"
+                  component={CustomButtonInput}
+                />
+              </StyledButtonGroup>
+            </StyledLabel>
+          </div>
+        )}
+        {questionValue === 2 && (
+          <div>
+            <StyledLabel htmlFor="contribution_rate">
+              Contribution Rate:
+              <StyledRightLabel>
+                { contributionRateValue }
+                %
+              </StyledRightLabel>
+
+              <Field
+                name="contribution_rate"
+                id="contribution_rate"
+                placeholder="Contribution Rate"
+                multiple
+                min={10}
+                max={35}
+                defaultValue={15}
+                color="#9bb645"
+                label="Contribution Rate"
+                component={SliderField}
+              />
+              <small>
+                You can&apos;t select a number below X% because the unfunded liability would not be funded in the constitutionally mandated 40 year period at or below that contribution rate. However, we expect that the total contribution rate will be
+                {' '}
+                <strong className="green">10%</strong>
+                {' '}
+                of payroll or less once the PERS investment fund is fully funded. We estimate that a PERS contribution rate of
+                {' '}
+                <strong className="green">15%</strong>
+                {' '}
+                to
+                {' '}
+                <strong className="green">18%</strong>
+                {' '}
+                is manageable for most public employers.
+              </small>
+            </StyledLabel>
+          </div>
+        )}
+        {questionValue === 3 && (
+          <div>
+            <StyledLabel htmlFor="pay">
+              Pay:
+              <StyledButtonGroup>
+                <Field
+                  name="pay"
+                  id="pay"
+                  value="250"
+                  inputvalue="250"
+                  buttonvalue="250 Million"
+                  component={CustomButtonInput}
+                />
+
+                <Field
+                  name="pay"
+                  id="pay"
+                  value="500"
+                  inputvalue="500"
+                  buttonvalue="500 Million"
+                  component={CustomButtonInput}
+                />
+
+                <Field
+                  name="pay"
+                  id="pay"
+                  value="1000"
+                  inputvalue="1000"
+                  buttonvalue="1 Billion"
+                  component={CustomButtonInput}
+                />
+                <Field
+                  name="pay"
+                  id="pay"
+                  value="2000"
+                  inputvalue="2000"
+                  buttonvalue="2 Billion"
+                  component={CustomButtonInput}
+                />
+                <Field
+                  name="pay"
+                  id="pay"
+                  value="4000"
+                  inputvalue="4000"
+                  buttonvalue="4 Billion"
+                  component={CustomButtonInput}
+                />
+              </StyledButtonGroup>
+              <small>
+                Directing revenue to fund this challenge is complex.
+                {' '}
+                <strong className="green">30% </strong>
+                of the obligation is held by the state,
+                {' '}
+                <strong className="green">30% </strong>
+                by schools, and
+                {' '}
+                <strong className="green">40% </strong>
+                {' '}
+                by cities, counties and special service districts. Each of these has a different tax base. Direct funding could be a result of taking funding away from existing programs or new revenue through a tax. The kinds of taxes that could deliver revenue at this level could be property taxes, a sales tax, or an additional corporate tax. In 2019, Oregon passed a $1B corporate tax to fund schools.
+              </small>
+            </StyledLabel>
+          </div>
+        )}
+      </Row>
+
+      <Row>
+        <h4>
+          Unfunded Accrued Liability:
+          {' '}
+          <StyledRightLabel>26600</StyledRightLabel>
+        </h4>
+      </Row>
+
+      <Row>
+        <StyledLabel htmlFor="sual">
+          SUAL:
+          <StyledRightLabel>
+            0
+          </StyledRightLabel>
+          <Field
+            name="sual"
+            id="sual"
+            placeholder="SUAL"
+            min={0}
+            max={50}
+            defaultValue={0}
+            label="Sequestered Unfunded Accrued Liability"
+            component={SliderField}
+          />
+        </StyledLabel>
+      </Row>
+
+      <Row>
+        <StyledLabel htmlFor="RR">
+          Rate of Return:
+          <StyledButtonGroup>
+            <Field
+              name="RR"
+              id="RR"
+              value="5"
+              inputvalue="5"
+              buttonvalue="5.0%"
+              component={CustomButtonInput}
+            />
+
+            <Field
+              name="RR"
+              id="RR"
+              value="6.7"
+              inputvalue="6.7"
+              buttonvalue="6.7%"
+              component={CustomButtonInput}
+            />
+
+            <Field
+              name="RR"
+              id="RR"
+              value="7.2"
+              inputvalue="7.2"
+              buttonvalue="7.2%"
+              component={CustomButtonInput}
+            />
+
+            <Field
+              name="RR"
+              id="RR"
+              value="9"
+              inputvalue="9"
+              buttonvalue="9.0%"
+              component={CustomButtonInput}
+            />
+          </StyledButtonGroup>
+        </StyledLabel>
+      </Row>
+
+      <Row>
+        <h4>
+          Inflation:
+          {' '}
+          <StyledRightLabel>1.03</StyledRightLabel>
+        </h4>
+      </Row>
+
+      <Row>
+        <StyledLabel htmlFor="tax">
+          Tax
+          <StyledRightLabel>0</StyledRightLabel>
+          <Field
+            name="tax"
+            id="tax"
+            placeholder="Tax Per Year"
+            min={0}
+            max={2}
+            defaultValue={0}
+            step={0.01}
+            label="Tax Per Year"
+            component={SliderField}
+          />
+        </StyledLabel>
+      </Row>
+
 
       <div>
-        <Button type="submit" disabled={pristine || submitting}>
+        <SubmitButton type="submit" disabled={submitting}>
           Submit
-        </Button>
+        </SubmitButton>
         <Button type="button" disabled={pristine || submitting} onClick={reset}>
           Clear Values
         </Button>
@@ -351,27 +378,41 @@ const TestForm = (props) => {
 TestForm.propTypes = {
   ...propTypes,
   questionValue: number,
+  amperiodValue: number,
 };
 
 TestForm.defaultProps = {
   questionValue: 1,
+  amperiodValue: 16,
 };
 
 const TestFormContainer = reduxForm({
-  form: 'test', // a unique name for the form
+  form: 'pers', // a unique name for the form
+  keepDirtyOnReinitialize: true,
   initialValues: {
-    sliderOne: 50,
     question: 1,
+    amperiod: 16,
+    contribution_rate: 15,
+    pay: 1000,
+    ual: 26600,
+    sual: 0,
+    RR: 5,
+    inflation: 1.03,
+    tax: 0,
   },
 })(TestForm);
 
 // Decorate with connect to read form values
-const selector = formValueSelector('test'); // <-- same as form name
+const selector = formValueSelector('pers'); // <-- same as form name
 const ConnectedTestForm = connect((state) => {
   const questionValue = selector(state, 'question');
+  const amperiodValue = selector(state, 'amperiod');
+  const contributionRateValue = selector(state, 'contribution_rate');
 
   return {
     questionValue, // available as props on the form
+    amperiodValue,
+    contributionRateValue,
   };
 })(TestFormContainer);
 

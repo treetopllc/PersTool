@@ -8,11 +8,11 @@ import logging
 app = Flask(__name__)
 CORS(app)
 
-def raisethemoney(sual, tax, RR, year):
+def raisethemoney(sual, tax, RR, year, inflation):
 	sual_list= [sual]
 	tax_list = [tax]
 	while sual > 0:
-		sual = (sual - tax) * (RR + inflation-1)
+		sual = (sual - tax) * (RR + inflation - 1)
 		if year >= 2120:
 			print("Tax too low")
 			break
@@ -369,7 +369,7 @@ def post():
     elif question == 3:
     	data, end_year = calculate_contribution(pay, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly)
 
-    sual_list, tax_list, sualend_year = raisethemoney(sual,tax,RR, end_year)
+    sual_list, tax_list, sualend_year = raisethemoney(sual,tax,RR, end_year, inflation)
     data = np.asarray(data)
 
 

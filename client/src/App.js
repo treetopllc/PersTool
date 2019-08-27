@@ -1,26 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { VictoryBar, VictoryStack } from 'victory';
+import {
+  BrowserRouter as Router,
+  Route,
+  NavLink,
+} from 'react-router-dom';
 
 import 'semantic-ui-css/semantic.min.css';
-import { Container, Grid } from 'semantic-ui-react';
+import {
+  Container, Grid, Menu, Modal, Header, Button, Icon, Divider,
+} from 'semantic-ui-react';
 import { createGlobalStyle } from 'styled-components';
-import TestForm from './components/form';
+
+import TestForm from './components/Form';
+import ControlledModal from './components/Modal';
+import { ResultsGraph } from './components/Graph';
 
 
 const GlobalStyle = createGlobalStyle`
-  body, input, small {
+  body, input, small, p, button {
     font-family: 'Libre Franklin', sans-serif !important;
   }
 
-  h1, h2, h3, h4 {
+  h1, h2, h3, h4, a {
     font-family: 'Fjalla One', sans-serif !important;
   }
+
+  body {
+    background-color: #d3dfab;
+  }
+
+  .container {
+    background-color: white;
+    padding: 30px 50px;
+  }
+
+  h1 {
+    border-top: 30px solid #52c2c8;
+    display: inline;
+  }
+
+  .green {
+    color: #9bb645 !important;
+  }
+
+  a.item.active {
+    color: #52c2c8 !important;
+    border-color: #52c2c8 !important;
+  }
 `;
+
+const Navigation = () => (
+  <Menu pointing secondary>
+    <Menu.Menu position="right">
+      <Menu.Item as={NavLink} exact name="home" to="/">
+        HOME
+      </Menu.Item>
+      <Menu.Item as={NavLink} name="about" to="/about">
+        ABOUT THIS GAME
+      </Menu.Item>
+      <Menu.Item as={NavLink} exact name="calculator" to="/calculator">
+        CALCULATOR
+      </Menu.Item>
+      <Menu.Item as={NavLink} name="assumptions" to="/assumptions">
+        OUR ASSUMPTIONS
+      </Menu.Item>
+    </Menu.Menu>
+  </Menu>
+);
 
 
 function App() {
   const [state, setData] = useState([]); // move to redux?
+  const [modalState, setState] = useState({ modalOpen: false });
+
+  const handleOpen = results => setState({ modalOpen: true, results });
+
+  const handleClose = () => setState({ modalOpen: false });
+
   const handleSubmit = (values) => {
     axios.post('/api', { data: values })
       .then((response) => {
@@ -28,15 +85,17 @@ function App() {
         const normalCostArray = [];
         const ualArray = [];
         const pobArray = [];
-        // eslint-disable-next-line camelcase
-        response.data.forEach(({ normal_cost, ual, sual, pob, payment, year }) => {
-          payArray.push({
-            payment,
+        response.data.forEach(({
+          // eslint-disable-next-line camelcase
+          normal_cost, ual, sual, pob, payment, year,
+        }) => {
+          pobArray.push({
+            pob: pob || 0,
             year,
           });
 
-          pobArray.push({
-            pob: pob || 0,
+          payArray.push({
+            payment,
             year,
           });
 
@@ -50,56 +109,39 @@ function App() {
             year,
           });
         });
-        setData({
+
+        const results = {
           payArray,
           pobArray,
           normalCostArray,
           ualArray,
-        });
+        };
+
+        setData(results);
+        handleOpen(results);
       })
       .catch((error) => {
         throw error;
       });
   };
+
+
   return (
-    <Container style={{ margin: 20 }}>
+    <Router>
       <GlobalStyle />
-      <Grid>
-        <Grid.Row>
-          <Grid.Column width={16}>
-            <TestForm onSubmit={handleSubmit} />
-          </Grid.Column>
-          <Grid.Column width={16}>
-            <VictoryStack>
-              <VictoryBar
-                x="year"
-                y="normal_cost"
-                data={state.normalCostArray}
-                style={{ data: { fill: '#9bb645', fillOpacity: 0.7 } }}
-              />
-              <VictoryBar
-                x="year"
-                y="payment"
-                data={state.payArray}
-                style={{ data: { fill: '#AF519C', fillOpacity: 0.7 } }}
-              />
-              <VictoryBar
-                x="year"
-                y="pob"
-                data={state.pobArray}
-                style={{ data: { fill: '#52c2c8', fillOpacity: 0.7 } }}
-              />
-              <VictoryBar
-                x="year"
-                y="ual"
-                data={state.ualArray}
-                style={{ data: { fill: '#AAAAAA', fillOpacity: 0.7 } }}
-              />
-            </VictoryStack>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    </Container>
+      <Container style={{ margin: 20 }}>
+        <h1>PERS Tool</h1>
+
+        <Navigation />
+
+        <Route path="/" exact component={() => <div>Profile</div>} />
+        <Route path="/calculator" component={() => <TestForm onSubmit={handleSubmit} />} />
+        <Route path="/assumptions" component={() => <div>Assumptions</div>} />
+        <Route path="/about" component={() => <div>About</div>} />
+
+        <ControlledModal handleClose={handleClose} modalState={modalState} />
+      </Container>
+    </Router>
   );
 }
 
