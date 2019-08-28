@@ -75,6 +75,8 @@ const TestForm = (props) => {
     questionValue,
     amperiodValue,
     contributionRateValue,
+    sualValue,
+    taxValue,
     handleSubmit,
     pristine,
     reset,
@@ -278,7 +280,7 @@ const TestForm = (props) => {
         <StyledLabel htmlFor="sual">
           SUAL:
           <StyledRightLabel>
-            0
+            { sualValue }
           </StyledRightLabel>
           <Field
             name="sual"
@@ -287,6 +289,7 @@ const TestForm = (props) => {
             min={0}
             max={50}
             defaultValue={0}
+            color="#9bb645"
             label="Sequestered Unfunded Accrued Liability"
             component={SliderField}
           />
@@ -347,7 +350,7 @@ const TestForm = (props) => {
       <Row>
         <StyledLabel htmlFor="tax">
           Tax
-          <StyledRightLabel>0</StyledRightLabel>
+          <StyledRightLabel>{taxValue}</StyledRightLabel>
           <Field
             name="tax"
             id="tax"
@@ -356,6 +359,7 @@ const TestForm = (props) => {
             max={2}
             defaultValue={0}
             step={0.01}
+            color="#9bb645"
             label="Tax Per Year"
             component={SliderField}
           />
@@ -408,11 +412,15 @@ const ConnectedTestForm = connect((state) => {
   const questionValue = selector(state, 'question');
   const amperiodValue = selector(state, 'amperiod');
   const contributionRateValue = selector(state, 'contribution_rate');
+  const sualValue = selector(state, 'sual');
+  const taxValue = selector(state, 'tax');
 
   return {
     questionValue, // available as props on the form
     amperiodValue,
     contributionRateValue,
+    sualValue,
+    taxValue,
   };
 })(TestFormContainer);
 
@@ -420,13 +428,10 @@ export default ConnectedTestForm;
 
 /* TODO:
   - register defaultValues as initialValues
-  - break this file up
   - update propTypes
-  - convert the select to pills/tabs
   - defaultValues for the graph
   - (API) error handling and validation
   - (FE) error handling and validation
   - move styles into their own file
-  - style padding and margins
   - move hooks to redux
   */

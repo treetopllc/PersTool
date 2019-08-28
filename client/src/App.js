@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import {
   BrowserRouter as Router,
@@ -8,13 +8,12 @@ import {
 
 import 'semantic-ui-css/semantic.min.css';
 import {
-  Container, Grid, Menu, Modal, Header, Button, Icon, Divider,
+  Container, Menu,
 } from 'semantic-ui-react';
 import { createGlobalStyle } from 'styled-components';
 
 import TestForm from './components/Form';
 import ControlledModal from './components/Modal';
-import { ResultsGraph } from './components/Graph';
 
 
 const GlobalStyle = createGlobalStyle`
@@ -71,7 +70,7 @@ const Navigation = () => (
 
 
 function App() {
-  const [state, setData] = useState([]); // move to redux?
+  const [_, setData] = useState([]); // move to redux?
   const [modalState, setState] = useState({ modalOpen: false });
 
   const handleOpen = results => setState({ modalOpen: true, results });
@@ -91,22 +90,22 @@ function App() {
         }) => {
           pobArray.push({
             pob: pob || 0,
-            year,
+            year: year.toString(),
           });
 
           payArray.push({
             payment,
-            year,
+            year: year.toString(),
           });
 
           normalCostArray.push({
             normal_cost,
-            year,
+            year: year.toString(),
           });
 
           ualArray.push({
             ual,
-            year,
+            year: year.toString(),
           });
         });
 

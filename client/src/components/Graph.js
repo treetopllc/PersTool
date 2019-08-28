@@ -1,19 +1,26 @@
 import React from 'react';
-import { VictoryBar, VictoryStack, createContainer } from 'victory';
+import {
+  VictoryBar, 
+  VictoryStack, 
+  createContainer, 
+  VictoryTooltip, 
+  VictoryAxis,
+  VictoryChart,
+} from 'victory';
+ 
 
-
-const VictoryZoomVoronoiContainer = createContainer('voronoi');
+const VictoryVoronoiContainer = createContainer('zoom', 'voronoi');
 
 const createStackLabels = (data) => {
   switch (true) {
     case !!data.ual:
-      return `${data.year}: ual: ${Math.round(data.ual, 2)}`;
+      return `${data.year} ual: ${Math.round(data.ual, 2)}`;
     case !!data.payment:
-      return `${data.year}: payment: ${data.payment}`;
+      return `${data.year} payment: ${data.payment}`;
     case !!data.normal_cost:
-      return `${data.year}: normal_cost: ${data.normal_cost}`;
+      return `${data.year} normal cost: ${data.normal_cost}`;
     case !!data.pob:
-      return `${data.year}: pob: ${data.pob}`;
+      return `${data.year} pob: ${data.pob}`;
     default:
       return `${data.year}`;
   }
@@ -28,60 +35,79 @@ export const ResultsGraph = ({
     ualArray,
   },
 }) => (
-  <VictoryStack
-    labels={datum => datum.title}
-    colorScale={['#9bb645', '#52c2c8', '#AAAAAA', '#AF519C']}
+  <VictoryChart
     containerComponent={(
-      <VictoryZoomVoronoiContainer
+      <VictoryVoronoiContainer
         labels={createStackLabels}
+        labelComponent={
+          <VictoryTooltip constrainToVisibleArea />
+        }
       />
-      )}
+    )}
+    domainPadding={{ x: 20 }}
+    animate={{
+      duration: 300,
+    }}
   >
-    <VictoryBar
-      x="year"
-      y="pob"
-      data={pobArray}
-      style={{
-        data: {
-          fill: '#52c2c8',
-          fillOpacity: 0.8,
-        },
-      }}
+    <VictoryAxis
+      width={400}
+      height={400}
+      fixLabelOverlap
     />
 
-    <VictoryBar
-      x="year"
-      y="normal_cost"
-      data={normalCostArray}
-      style={{
-        data: {
-          fill: '#9bb645',
-          fillOpacity: 0.8,
-        },
-      }}
+    <VictoryAxis
+      dependentAxis
+      width={400}
+      height={400}
     />
+    <VictoryStack>
+      <VictoryBar
+        x="year"
+        y="pob"
+        data={pobArray}
+        style={{
+          data: {
+            fill: '#52c2c8',
+            fillOpacity: 0.8,
+          },
+        }}
+      />
 
-    <VictoryBar
-      x="year"
-      y="payment"
-      data={payArray}
-      style={{
-        data: {
-          fill: '#9bb645',
-          fillOpacity: 0.4,
-        },
-      }}
-    />
-    <VictoryBar
-      x="year"
-      y="ual"
-      data={ualArray}
-      style={{
-        data: {
-          fill: '#52c2c8',
-          fillOpacity: 0.4,
-        },
-      }}
-    />
-  </VictoryStack>
+      <VictoryBar
+        x="year"
+        y="normal_cost"
+        data={normalCostArray}
+        style={{
+          data: {
+            fill: '#9bb645',
+            fillOpacity: 0.8,
+          },
+        }}
+      />
+
+      <VictoryBar
+        x="year"
+        y="payment"
+        data={payArray}
+        style={{
+          data: {
+            fill: '#52c2c8',
+            fillOpacity: 0.4,
+          },
+        }}
+      />
+
+      <VictoryBar
+        x="year"
+        y="ual"
+        data={ualArray}
+        style={{
+          data: {
+            fill: '#9bb645',
+            fillOpacity: 0.4,
+          },
+        }}
+      />
+    </VictoryStack>
+  </VictoryChart>
 );

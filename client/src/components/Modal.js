@@ -10,17 +10,17 @@ const ControlledModal = ({
   handleClose, modalState,
 }) => (
   <Modal
-      open={modalState.modalOpen}
-      onClose={handleClose}
-      closeIcon
-      size="mini"
-    >
-      <Modal.Content>
-        <ResultsGraph resultsState={modalState.results} />
-        <Divider horizontal>Or</Divider>
-        <ResultsGraph resultsState={modalState.results} />
-      </Modal.Content>
-    </Modal>
+    open={modalState.modalOpen}
+    onClose={handleClose}
+    closeIcon
+    size="tiny"
+  >
+    <Modal.Content>
+      <ResultsGraph resultsState={modalState.results} />
+      <Divider horizontal>Or</Divider>
+      <ResultsGraph resultsState={modalState.results} />
+    </Modal.Content>
+  </Modal>
 );
 
 export default ControlledModal;
