@@ -1,13 +1,13 @@
 import React from 'react';
 import {
-  VictoryBar, 
-  VictoryStack, 
-  createContainer, 
-  VictoryTooltip, 
+  VictoryBar,
+  VictoryStack,
+  createContainer,
+  VictoryTooltip,
   VictoryAxis,
   VictoryChart,
 } from 'victory';
- 
+
 
 const VictoryVoronoiContainer = createContainer('zoom', 'voronoi');
 
