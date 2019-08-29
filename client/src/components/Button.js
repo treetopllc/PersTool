@@ -19,7 +19,7 @@ const CustomButtonInput = ({
   inputvalue,
   buttonvalue,
 }) => (
-  <StyledButton active={value === parseInt(inputvalue, 10)} type="button" value={inputvalue} onClick={e => onChange(parseInt(e.target.value, 10))}>
+  <StyledButton active={value === parseFloat(inputvalue, 10)} type="button" value={inputvalue} onClick={e => onChange(parseFloat(e.target.value, 10))}>
     {buttonvalue}
   </StyledButton>
 );

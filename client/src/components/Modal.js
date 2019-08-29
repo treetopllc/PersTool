@@ -8,19 +8,36 @@ import { ResultsGraph } from './Graph';
 
 const ControlledModal = ({
   handleClose, modalState,
-}) => (
-  <Modal
-    open={modalState.modalOpen}
-    onClose={handleClose}
-    closeIcon
-    size="tiny"
-  >
-    <Modal.Content>
-      <ResultsGraph resultsState={modalState.results} />
-      <Divider horizontal>Or</Divider>
-      <ResultsGraph resultsState={modalState.results} />
-    </Modal.Content>
-  </Modal>
-);
+}) => {
+  const getYears = (results) => {
+    const resultObject = results && results.ualArray.find(res => res.paid);
+    if (resultObject) {
+      const { year } = resultObject;
+      return year - 2020;
+    }
+    return 'over 40';
+  };
+
+  return (
+    <Modal
+      open={modalState.modalOpen}
+      onClose={handleClose}
+      closeIcon
+      size="tiny"
+    >
+      <Modal.Content>
+        <ResultsGraph resultsState={modalState.results} />
+        <Divider horizontal>
+          It will take
+          {' '}
+          {getYears(modalState.results)}
+          {' '}
+          years
+        </Divider>
+        <ResultsGraph resultsState={modalState.results} />
+      </Modal.Content>
+    </Modal>
+  );
+};
 
 export default ControlledModal;

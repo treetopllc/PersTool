@@ -14,13 +14,13 @@ const VictoryVoronoiContainer = createContainer('zoom', 'voronoi');
 const createStackLabels = (data) => {
   switch (true) {
     case !!data.ual:
-      return `${data.year} ual: ${Math.round(data.ual, 2)}`;
+      return `${data.year} ual: ${Math.round(data.ual)}`;
     case !!data.payment:
-      return `${data.year} payment: ${data.payment}`;
+      return `${data.year} payment: ${Math.round(data.payment)}`;
     case !!data.normal_cost:
-      return `${data.year} normal cost: ${data.normal_cost}`;
+      return `${data.year} normal cost: ${Math.round(data.normal_cost)}`;
     case !!data.pob:
-      return `${data.year} pob: ${data.pob}`;
+      return `${data.year} pob: ${Math.round(data.pob)}`;
     default:
       return `${data.year}`;
   }
@@ -103,7 +103,7 @@ export const ResultsGraph = ({
         data={ualArray}
         style={{
           data: {
-            fill: '#9bb645',
+            fill: '#E5E8E8',
             fillOpacity: 0.4,
           },
         }}

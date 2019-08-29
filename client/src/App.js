@@ -64,6 +64,9 @@ const Navigation = () => (
       <Menu.Item as={NavLink} name="assumptions" to="/assumptions">
         OUR ASSUMPTIONS
       </Menu.Item>
+      <Menu.Item as={NavLink} name="windfall" to="/windfall">
+        WINDFALL
+      </Menu.Item>
     </Menu.Menu>
   </Menu>
 );
@@ -77,52 +80,56 @@ function App() {
 
   const handleClose = () => setState({ modalOpen: false });
 
-  const handleSubmit = (values) => {
-    axios.post('/api', { data: values })
-      .then((response) => {
-        const payArray = [];
-        const normalCostArray = [];
-        const ualArray = [];
-        const pobArray = [];
-        response.data.forEach(({
-          // eslint-disable-next-line camelcase
-          normal_cost, ual, sual, pob, payment, year,
-        }) => {
-          pobArray.push({
-            pob: pob || 0,
-            year: year.toString(),
-          });
+  // cont getDuration = (ual, year) =>
 
-          payArray.push({
-            payment,
-            year: year.toString(),
-          });
+  const handleSubmit = values => axios.post('/api', { data: values })
+    .then((response) => {
+      const payArray = [];
+      const normalCostArray = [];
+      const ualArray = [];
+      const pobArray = [];
+      response.data.forEach(({
+        // eslint-disable-next-line camelcase
+        normal_cost, ual, sual, pob, payment, year,
+      }) => {
+        pobArray.push({
+          pob: pob || 0,
+          year: year.toString(),
+        }); // take this out
 
-          normalCostArray.push({
-            normal_cost,
-            year: year.toString(),
-          });
+        // take out ual and inflation
 
-          ualArray.push({
-            ual,
-            year: year.toString(),
-          });
+        payArray.push({
+          payment,
+          year: year.toString(),
         });
 
-        const results = {
-          payArray,
-          pobArray,
-          normalCostArray,
-          ualArray,
-        };
+        normalCostArray.push({
+          normal_cost,
+          year: year.toString(),
+        });
 
-        setData(results);
-        handleOpen(results);
-      })
-      .catch((error) => {
-        throw error;
+        ualArray.push({
+          ual,
+          year: year.toString(),
+          paid: ual <= 0,
+        }); // background
       });
-  };
+
+
+      const results = {
+        payArray,
+        pobArray,
+        normalCostArray,
+        ualArray,
+      };
+
+      setData(results);
+      handleOpen(results);
+    })
+    .catch((error) => {
+      throw error;
+    });
 
 
   return (
@@ -137,6 +144,7 @@ function App() {
         <Route path="/calculator" component={() => <TestForm onSubmit={handleSubmit} />} />
         <Route path="/assumptions" component={() => <div>Assumptions</div>} />
         <Route path="/about" component={() => <div>About</div>} />
+        <Route path="/windfall" component={() => <div>Windfall</div>} />
 
         <ControlledModal handleClose={handleClose} modalState={modalState} />
       </Container>
