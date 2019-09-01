@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import {
   Field,
@@ -12,14 +12,7 @@ import {
   Label,
 } from 'semantic-ui-react';
 import {
-  func,
   number,
-  string,
-  bool,
-  oneOfType,
-  shape,
-  arrayOf,
-  object,
 } from 'prop-types';
 import styled from 'styled-components';
 
@@ -73,7 +66,6 @@ const SubmitButton = styled(Button)`
 const TestForm = (props) => {
   const {
     questionValue,
-    amperiodValue,
     contributionRateValue,
     sualValue,
     taxValue,
@@ -87,14 +79,14 @@ const TestForm = (props) => {
     <Form onSubmit={handleSubmit}>
       <Row>
         <StyledLabel htmlFor="question">
-          Method:
+          <h4>Method:</h4>
           <StyledButtonGroup>
             <Field
               name="question"
               id="question"
               value="1"
               inputvalue="1"
-              buttonvalue="Amortization period"
+              buttonvalue="Amortization Period"
               component={CustomButtonInput}
             />
 
@@ -103,7 +95,7 @@ const TestForm = (props) => {
               id="question"
               value="2"
               inputvalue="2"
-              buttonvalue="Contribution rate"
+              buttonvalue="Employer Contribution Rate"
               component={CustomButtonInput}
             />
 
@@ -112,7 +104,7 @@ const TestForm = (props) => {
               id="question"
               value="3"
               inputvalue="3"
-              buttonvalue="Directed Funding"
+              buttonvalue="Funding"
               component={CustomButtonInput}
             />
           </StyledButtonGroup>
@@ -123,7 +115,7 @@ const TestForm = (props) => {
         {questionValue === 1 && (
           <div>
             <StyledLabel htmlFor="amperiod">
-              Years:
+              <h4>Years:</h4>
               <StyledButtonGroup>
                 <Field
                   name="amperiod"
@@ -166,9 +158,9 @@ const TestForm = (props) => {
         {questionValue === 2 && (
           <div>
             <StyledLabel htmlFor="contribution_rate">
-              Contribution Rate:
+              <h4>Contribution Rate:</h4>
               <StyledRightLabel>
-                { contributionRateValue }
+                { Math.round(contributionRateValue * 100) }
                 %
               </StyledRightLabel>
 
@@ -177,15 +169,15 @@ const TestForm = (props) => {
                 id="contribution_rate"
                 placeholder="Contribution Rate"
                 multiple
-                min={10}
-                max={35}
-                defaultValue={15}
+                min={0.10}
+                max={0.35}
+                defaultValue={0.15}
                 color="#9bb645"
                 label="Contribution Rate"
                 component={SliderField}
               />
               <small>
-                You can&apos;t select a number below X% because the unfunded liability would not be funded in the constitutionally mandated 40 year period at or below that contribution rate. However, we expect that the total contribution rate will be
+                We expect that the total contribution rate will be
                 {' '}
                 <strong className="green">10%</strong>
                 {' '}
@@ -205,40 +197,38 @@ const TestForm = (props) => {
         {questionValue === 3 && (
           <div>
             <StyledLabel htmlFor="pay">
-              Pay:
+              <h4>Pay:</h4>
               <StyledButtonGroup>
-                <Field
-                  name="pay"
-                  id="pay"
-                  value="250"
-                  inputvalue="250"
-                  buttonvalue="250 Million"
-                  component={CustomButtonInput}
-                />
-
-                <Field
-                  name="pay"
-                  id="pay"
-                  value="500"
-                  inputvalue="500"
-                  buttonvalue="500 Million"
-                  component={CustomButtonInput}
-                />
-
-                <Field
-                  name="pay"
-                  id="pay"
-                  value="1000"
-                  inputvalue="1000"
-                  buttonvalue="1 Billion"
-                  component={CustomButtonInput}
-                />
                 <Field
                   name="pay"
                   id="pay"
                   value="2000"
                   inputvalue="2000"
-                  buttonvalue="2 Billion"
+                  buttonvalue="$2 Billion"
+                  component={CustomButtonInput}
+                />
+                <Field
+                  name="pay"
+                  id="pay"
+                  value="2500"
+                  inputvalue="2500"
+                  buttonvalue="$2.5 Billion"
+                  component={CustomButtonInput}
+                />
+                <Field
+                  name="pay"
+                  id="pay"
+                  value="3000"
+                  inputvalue="3000"
+                  buttonvalue="$3 Billion"
+                  component={CustomButtonInput}
+                />
+                <Field
+                  name="pay"
+                  id="pay"
+                  value="3500"
+                  inputvalue="3500"
+                  buttonvalue="$3.5 Billion"
                   component={CustomButtonInput}
                 />
                 <Field
@@ -246,7 +236,7 @@ const TestForm = (props) => {
                   id="pay"
                   value="4000"
                   inputvalue="4000"
-                  buttonvalue="4 Billion"
+                  buttonvalue="$4 Billion"
                   component={CustomButtonInput}
                 />
               </StyledButtonGroup>
@@ -272,13 +262,13 @@ const TestForm = (props) => {
         <h4>
           Unfunded Accrued Liability:
           {' '}
-          <StyledRightLabel>26600</StyledRightLabel>
+          <StyledRightLabel>$26.6 Billion</StyledRightLabel>
         </h4>
       </Row>
 
       <Row>
         <StyledLabel htmlFor="sual">
-          SUAL:
+          <h4>Sequestered Liability:</h4>
           <StyledRightLabel>
             { sualValue }
           </StyledRightLabel>
@@ -290,7 +280,7 @@ const TestForm = (props) => {
             max={50}
             defaultValue={0}
             color="#9bb645"
-            label="Sequestered Unfunded Accrued Liability"
+            label="Sequestered Liability"
             component={SliderField}
           />
         </StyledLabel>
@@ -298,7 +288,7 @@ const TestForm = (props) => {
 
       <Row>
         <StyledLabel htmlFor="RR">
-          Rate of Return:
+          <h4>Rate of Return:</h4>
           <StyledButtonGroup>
             <Field
               name="RR"
@@ -382,12 +372,10 @@ const TestForm = (props) => {
 TestForm.propTypes = {
   ...propTypes,
   questionValue: number,
-  amperiodValue: number,
 };
 
 TestForm.defaultProps = {
   questionValue: 1,
-  amperiodValue: 16,
 };
 
 const TestFormContainer = reduxForm({
@@ -397,11 +385,11 @@ const TestFormContainer = reduxForm({
   initialValues: {
     question: 1,
     amperiod: 16,
-    contribution_rate: 15,
-    pay: 1000,
+    contribution_rate: 0.15,
+    pay: 2000,
     ual: 26600,
     sual: 0,
-    RR: 5,
+    RR: 1.05,
     inflation: 1.03,
     tax: 0,
   },
@@ -430,7 +418,6 @@ export default ConnectedTestForm;
 /* TODO:
   - register defaultValues as initialValues
   - update propTypes
-  - defaultValues for the graph
   - (API) error handling and validation
   - (FE) error handling and validation
   - move styles into their own file

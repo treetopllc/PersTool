@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 
 const StyledButton = styled(Button)`
-  flex: 0 1 200px;
+  flex: 0 1 225px;
 
   &.ui.active.button {
     background-color: #9bb645;
