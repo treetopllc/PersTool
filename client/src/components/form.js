@@ -303,8 +303,8 @@ const TestForm = (props) => {
             <Field
               name="RR"
               id="RR"
-              value="5"
-              inputvalue="5"
+              value="1.05"
+              inputvalue="1.05"
               buttonvalue="5.0%"
               component={CustomButtonInput}
             />
@@ -312,8 +312,8 @@ const TestForm = (props) => {
             <Field
               name="RR"
               id="RR"
-              value="6.7"
-              inputvalue="6.7"
+              value="1.067"
+              inputvalue="1.067"
               buttonvalue="6.7%"
               component={CustomButtonInput}
             />
@@ -321,8 +321,8 @@ const TestForm = (props) => {
             <Field
               name="RR"
               id="RR"
-              value="7.2"
-              inputvalue="7.2"
+              value="1.072"
+              inputvalue="1.072"
               buttonvalue="7.2%"
               component={CustomButtonInput}
             />
@@ -330,8 +330,8 @@ const TestForm = (props) => {
             <Field
               name="RR"
               id="RR"
-              value="9"
-              inputvalue="9"
+              value="1.09"
+              inputvalue="1.09"
               buttonvalue="9.0%"
               component={CustomButtonInput}
             />
@@ -393,6 +393,7 @@ TestForm.defaultProps = {
 const TestFormContainer = reduxForm({
   form: 'pers', // a unique name for the form
   keepDirtyOnReinitialize: true,
+  enableReinitialize: true,
   initialValues: {
     question: 1,
     amperiod: 16,
