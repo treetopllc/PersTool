@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Field,
@@ -63,6 +63,16 @@ const SubmitButton = styled(Button)`
   color: white !important;
 `;
 
+const TextButton = styled(Button)`
+  margin: 0 10px;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+  box-shadow: none;
+  font-size: 0.85rem !important;
+  color: #52c2c8 !important;
+`;
+
 const TestForm = (props) => {
   const {
     questionValue,
@@ -74,6 +84,12 @@ const TestForm = (props) => {
     reset,
     submitting,
   } = props;
+
+  const [advancedCalculator, setAdvancedCalculator] = useState(false);
+  const handleSimpleCalculator = () => {
+    reset();
+    setAdvancedCalculator(false)
+  };
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -158,11 +174,13 @@ const TestForm = (props) => {
         {questionValue === 2 && (
           <div>
             <StyledLabel htmlFor="contribution_rate">
-              <h4>Contribution Rate:</h4>
-              <StyledRightLabel>
-                { Math.round(contributionRateValue * 100) }
-                %
-              </StyledRightLabel>
+              <h4>
+                Contribution Rate:
+                <StyledRightLabel>
+                  { Math.round(contributionRateValue * 100) }
+                  %
+                </StyledRightLabel>
+              </h4>
 
               <Field
                 name="contribution_rate"
@@ -267,26 +285,6 @@ const TestForm = (props) => {
       </Row>
 
       <Row>
-        <StyledLabel htmlFor="sual">
-          <h4>Sequestered Liability:</h4>
-          <StyledRightLabel>
-            { sualValue }
-          </StyledRightLabel>
-          <Field
-            name="sual"
-            id="sual"
-            placeholder="SUAL"
-            min={0}
-            max={50}
-            defaultValue={0}
-            color="#9bb645"
-            label="Sequestered Liability"
-            component={SliderField}
-          />
-        </StyledLabel>
-      </Row>
-
-      <Row>
         <StyledLabel htmlFor="RR">
           <h4>Rate of Return:</h4>
           <StyledButtonGroup>
@@ -330,39 +328,72 @@ const TestForm = (props) => {
       </Row>
 
       <Row>
-        <h4>
-          Inflation:
-          {' '}
-          <StyledRightLabel>1.03</StyledRightLabel>
-        </h4>
+        {advancedCalculator ? <TextButton type="button" float="right" onClick={handleSimpleCalculator}>Simple Calculator</TextButton> : <TextButton type="button" float="right" onClick={() => setAdvancedCalculator(true)}>Advanced Calculator</TextButton>}
+
       </Row>
 
-      <Row>
-        <StyledLabel htmlFor="tax">
-          Tax
-          <StyledRightLabel>{taxValue}</StyledRightLabel>
-          <Field
-            name="tax"
-            id="tax"
-            placeholder="Tax Per Year"
-            min={0}
-            max={2}
-            defaultValue={0}
-            step={0.01}
-            color="#9bb645"
-            label="Tax Per Year"
-            component={SliderField}
-          />
-        </StyledLabel>
-      </Row>
+      { advancedCalculator
+        && (
+        <Fragment>
+          <Row>
+            <h4>
+              Inflation:
+              {' '}
+              <StyledRightLabel>1.03</StyledRightLabel>
+            </h4>
+          </Row>
 
+          <Row>
+            <StyledLabel htmlFor="tax">
+              Tax
+              <StyledRightLabel>{taxValue}</StyledRightLabel>
+              <Field
+                name="tax"
+                id="tax"
+                placeholder="Tax Per Year"
+                min={0}
+                max={2}
+                defaultValue={0}
+                step={0.01}
+                color="#9bb645"
+                label="Tax Per Year"
+                component={SliderField}
+              />
+            </StyledLabel>
+          </Row>
+
+          <Row>
+            <StyledLabel htmlFor="sual">
+              <h4>
+                Sequestered Liability:
+                <StyledRightLabel>
+                  { sualValue }
+                </StyledRightLabel>
+              </h4>
+
+              <Field
+                name="sual"
+                id="sual"
+                placeholder="SUAL"
+                min={0}
+                max={50}
+                defaultValue={0}
+                color="#9bb645"
+                label="Sequestered Liability"
+                component={SliderField}
+              />
+            </StyledLabel>
+          </Row>
+        </Fragment>
+        )
+      }
 
       <div>
         <SubmitButton type="submit" disabled={submitting}>
           Submit
         </SubmitButton>
         <Button type="button" disabled={pristine || submitting} onClick={reset}>
-          Clear Values
+          Reset Values
         </Button>
       </div>
     </Form>
@@ -382,6 +413,7 @@ const TestFormContainer = reduxForm({
   form: 'pers', // a unique name for the form
   keepDirtyOnReinitialize: true,
   enableReinitialize: true,
+  destroyOnUnmount: false,
   initialValues: {
     question: 1,
     amperiod: 16,
