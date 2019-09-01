@@ -16,11 +16,9 @@ const createStackLabels = (data) => {
     case !!data.ual:
       return `${data.year} ual: ${Math.round(data.ual)}`;
     case !!data.payment:
-      return `${data.year} payment: ${Math.round(data.payment)}`;
+      return `${data.year} UAL Payment: ${Math.round(data.payment)}`;
     case !!data.normal_cost:
-      return `${data.year} normal cost: ${Math.round(data.normal_cost)}`;
-    case !!data.pob:
-      return `${data.year} pob: ${Math.round(data.pob)}`;
+      return `${data.year} Current Benefits: ${Math.round(data.normal_cost)}`;
     default:
       return `${data.year}`;
   }
@@ -61,18 +59,6 @@ export const ResultsGraph = ({
       height={400}
     />
     <VictoryStack>
-      <VictoryBar
-        x="year"
-        y="pob"
-        data={pobArray}
-        style={{
-          data: {
-            fill: '#52c2c8',
-            fillOpacity: 0.8,
-          },
-        }}
-      />
-
       <VictoryBar
         x="year"
         y="normal_cost"
