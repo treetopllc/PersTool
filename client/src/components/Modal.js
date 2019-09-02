@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import {
-  Modal, Divider,
+  Modal, Divider, Message,
 } from 'semantic-ui-react';
 
 import { ResultsGraph } from './Graph';
@@ -26,15 +26,28 @@ const ControlledModal = ({
       size="small"
     >
       <Modal.Content>
-        <ResultsGraph resultsState={modalState.results} />
-        <Divider horizontal>
-          It will take
-          {' '}
-          {getYears(modalState.results)}
-          {' '}
-          years
-        </Divider>
-        <ResultsGraph resultsState={modalState.results} />
+        { modalState.results && Object.keys(modalState.results).length
+          ? (
+            <Fragment>
+              <ResultsGraph resultsState={modalState.results} />
+              <Divider horizontal>
+                It will take
+                {' '}
+                {getYears(modalState.results)}
+                {' '}
+                years
+              </Divider>
+              <ResultsGraph resultsState={modalState.results} />
+            </Fragment>
+          )
+          : (
+            <Message info>
+              <Message.Header>Oops!</Message.Header>
+              <p>{ modalState.message }</p>
+            </Message>
+          )
+        }
+
       </Modal.Content>
     </Modal>
   );

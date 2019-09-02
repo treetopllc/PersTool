@@ -386,9 +386,8 @@ def post():
     elif question == 3:
     	data, end_year, paid = calculate_contribution(pay, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth)
 
-    # if paid == False or end_year >= 2060:
-    # 	resp.append({"paid": paid})
-    # 	return make_response(jsonify(resp), status.HTTP_200_OK)
+    if paid == False or end_year >= 2060:
+    	return make_response(jsonify(False), status.HTTP_200_OK)
 
     sual_list, tax_list, sualend_year = raisethemoney(sual, tax, RR, end_year, inflation)
     data = np.asarray(data)

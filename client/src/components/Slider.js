@@ -28,14 +28,6 @@ const SliderField = ({
     onChange,
   };
 
-  const handleValueChange = (e) => {
-    let inputValue = parseInt(e.target.value, 10);
-    if (!inputValue) {
-      inputValue = 0;
-    }
-    onChange(e.target.value);
-  };
-
   return (
     <Form.Field>
       <Slider

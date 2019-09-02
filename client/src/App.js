@@ -12,7 +12,7 @@ import {
 } from 'semantic-ui-react';
 import { createGlobalStyle } from 'styled-components';
 
-import TestForm from './components/Form';
+import Form from './components/Form';
 import ControlledModal from './components/Modal';
 
 
@@ -73,59 +73,61 @@ const Navigation = () => (
 
 
 function App() {
+  // eslint-disable-next-line no-unused-vars
   const [_, setData] = useState([]); // move to redux?
   const [modalState, setState] = useState({ modalOpen: false });
 
-  const handleOpen = results => setState({ modalOpen: true, results });
+  const handleOpen = (results, message) => setState({ modalOpen: true, results, message });
 
   const handleClose = () => setState({ modalOpen: false });
 
-  // cont getDuration = (ual, year) =>
-
   const handleSubmit = values => axios.post('/api', { data: values })
     .then((response) => {
-      const payArray = [];
-      const normalCostArray = [];
-      const ualArray = [];
-      const pobArray = [];
-      response.data.forEach(({
-        // eslint-disable-next-line camelcase
-        normal_cost, ual, sual, pob, payment, year,
-      }) => {
-        pobArray.push({
-          pob: pob || 0,
-          year: year.toString(),
-        }); // take this out
+      let message = '';
+      if (response.data) {
+        const payArray = [];
+        const normalCostArray = [];
+        const ualArray = [];
+        response.data.forEach(({
+          // eslint-disable-next-line camelcase
+          normal_cost, ual, payment, year,
+        }) => {
+          payArray.push({
+            payment,
+            year: year.toString(),
+          });
 
-        // take out ual and inflation
+          normalCostArray.push({
+            normal_cost,
+            year: year.toString(),
+          });
 
-        payArray.push({
-          payment,
-          year: year.toString(),
+          ualArray.push({
+            ual,
+            year: year.toString(),
+            paid: ual <= 0,
+          });
         });
 
-        normalCostArray.push({
-          normal_cost,
-          year: year.toString(),
-        });
 
-        ualArray.push({
-          ual,
-          year: year.toString(),
-          paid: ual <= 0,
-        }); // background
-      });
+        const results = {
+          payArray,
+          normalCostArray,
+          ualArray,
+        };
 
-
-      const results = {
-        payArray,
-        pobArray,
-        normalCostArray,
-        ualArray,
-      };
-
-      setData(results);
-      handleOpen(results);
+        setData(results);
+        handleOpen(results, message);
+      } else {
+        if (values.question === 1) {
+          message = 'The solution that you are attempting does not pay down the unfunded liability within the constitutionally mandated period of 40 years.';
+        } else if (values.question === 2) {
+          message = 'The solution that you are attempting does not pay down the unfunded liability within the constitutionally mandated period of 40 years. Try entering a higher contribution rate or changing the rate of return on PERS investments. But remember: investment returns are subject to market uncertainty and cannot be guaranteed, and employer contribution rates set too high could strain local economies. Most employers can manage a 15% - 18% contribution rate comfortably.';
+        } else {
+          message = 'The solution that you are attempting does not pay down the unfunded liability within the constitutionally mandated period of 40 years. Try entering a higher amount to fund PERS or changing the rate of return on PERS investments. But remember: investment returns are subject to market uncertainty and cannot be guaranteed, and setting an annual funding amount that is too high could strain local economies.';
+        }
+        handleOpen({}, message);
+      }
     })
     .catch((error) => {
       throw error;
@@ -141,7 +143,7 @@ function App() {
         <Navigation />
 
         <Route path="/" exact component={() => <div>Profile</div>} />
-        <Route path="/calculator" component={() => <TestForm onSubmit={handleSubmit} />} />
+        <Route path="/calculator" component={() => <Form onSubmit={handleSubmit} />} />
         <Route path="/assumptions" component={() => <div>Assumptions</div>} />
         <Route path="/about" component={() => <div>About</div>} />
         <Route path="/windfall" component={() => <div>Windfall</div>} />
