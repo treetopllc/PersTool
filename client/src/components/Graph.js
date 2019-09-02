@@ -6,6 +6,7 @@ import {
   VictoryTooltip,
   VictoryAxis,
   VictoryChart,
+  VictoryLabel,
 } from 'victory';
 
 
@@ -14,11 +15,11 @@ const VictoryVoronoiContainer = createContainer('zoom', 'voronoi');
 const createStackLabels = (data) => {
   switch (true) {
     case !!data.ual:
-      return `${data.year} ual: ${Math.round(data.ual)}`;
+      return `${data.year} Unfunded Liability: $${Math.round(data.ual) / 1000}B`;
     case !!data.payment:
-      return `${data.year} UAL Payment: ${Math.round(data.payment)}`;
+      return `${data.year} Legacy Cost: $${Math.round(data.payment) / 1000}B`;
     case !!data.normal_cost:
-      return `${data.year} Current Benefits: ${Math.round(data.normal_cost)}`;
+      return `${data.year} Current Benefits: $${Math.round(data.normal_cost) / 1000}B`;
     default:
       return `${data.year}`;
   }
@@ -55,6 +56,7 @@ export const ResultsGraph = ({
 
     <VictoryAxis
       dependentAxis
+      tickLabelComponent={<VictoryLabel text={datum => `$${datum / 1000}B`} />}
       width={400}
       height={400}
     />

@@ -23,7 +23,7 @@ const ControlledModal = ({
       open={modalState.modalOpen}
       onClose={handleClose}
       closeIcon
-      size="tiny"
+      size="small"
     >
       <Modal.Content>
         <ResultsGraph resultsState={modalState.results} />

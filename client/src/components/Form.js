@@ -88,7 +88,7 @@ const TestForm = (props) => {
   const [advancedCalculator, setAdvancedCalculator] = useState(false);
   const handleSimpleCalculator = () => {
     reset();
-    setAdvancedCalculator(false)
+    setAdvancedCalculator(false);
   };
 
   return (
@@ -190,6 +190,7 @@ const TestForm = (props) => {
                 min={0.10}
                 max={0.35}
                 defaultValue={0.15}
+                step={0.01}
                 color="#9bb645"
                 label="Contribution Rate"
                 component={SliderField}
@@ -222,7 +223,7 @@ const TestForm = (props) => {
                   id="pay"
                   value="2000"
                   inputvalue="2000"
-                  buttonvalue="$2 Billion"
+                  buttonvalue="$2 B"
                   component={CustomButtonInput}
                 />
                 <Field
@@ -230,7 +231,7 @@ const TestForm = (props) => {
                   id="pay"
                   value="2500"
                   inputvalue="2500"
-                  buttonvalue="$2.5 Billion"
+                  buttonvalue="$2.5 B"
                   component={CustomButtonInput}
                 />
                 <Field
@@ -238,7 +239,7 @@ const TestForm = (props) => {
                   id="pay"
                   value="3000"
                   inputvalue="3000"
-                  buttonvalue="$3 Billion"
+                  buttonvalue="$3 B"
                   component={CustomButtonInput}
                 />
                 <Field
@@ -246,7 +247,7 @@ const TestForm = (props) => {
                   id="pay"
                   value="3500"
                   inputvalue="3500"
-                  buttonvalue="$3.5 Billion"
+                  buttonvalue="$3.5 B"
                   component={CustomButtonInput}
                 />
                 <Field
@@ -254,23 +255,10 @@ const TestForm = (props) => {
                   id="pay"
                   value="4000"
                   inputvalue="4000"
-                  buttonvalue="$4 Billion"
+                  buttonvalue="$4 B"
                   component={CustomButtonInput}
                 />
               </StyledButtonGroup>
-              <small>
-                Directing revenue to fund this challenge is complex.
-                {' '}
-                <strong className="green">30% </strong>
-                of the obligation is held by the state,
-                {' '}
-                <strong className="green">30% </strong>
-                by schools, and
-                {' '}
-                <strong className="green">40% </strong>
-                {' '}
-                by cities, counties and special service districts. Each of these has a different tax base. Direct funding could be a result of taking funding away from existing programs or new revenue through a tax. The kinds of taxes that could deliver revenue at this level could be property taxes, a sales tax, or an additional corporate tax. In 2019, Oregon passed a $1B corporate tax to fund schools.
-              </small>
             </StyledLabel>
           </div>
         )}
@@ -278,9 +266,9 @@ const TestForm = (props) => {
 
       <Row>
         <h4>
-          Unfunded Accrued Liability:
+          Unfunded Liability:
           {' '}
-          <StyledRightLabel>$26.6 Billion</StyledRightLabel>
+          <StyledRightLabel>$26.6 B</StyledRightLabel>
         </h4>
       </Row>
 
@@ -336,16 +324,8 @@ const TestForm = (props) => {
         && (
         <Fragment>
           <Row>
-            <h4>
-              Inflation:
-              {' '}
-              <StyledRightLabel>1.03</StyledRightLabel>
-            </h4>
-          </Row>
-
-          <Row>
             <StyledLabel htmlFor="tax">
-              Tax
+              Directed Funding for Sequestered Liability
               <StyledRightLabel>{taxValue}</StyledRightLabel>
               <Field
                 name="tax"
@@ -359,6 +339,19 @@ const TestForm = (props) => {
                 label="Tax Per Year"
                 component={SliderField}
               />
+              <small>
+                Directing revenue to fund this challenge is complex.
+                {' '}
+                <strong className="green">30% </strong>
+                of the obligation is held by the state,
+                {' '}
+                <strong className="green">30% </strong>
+                by schools, and
+                {' '}
+                <strong className="green">40% </strong>
+                {' '}
+                by cities, counties and special service districts. Each of these has a different tax base. Direct funding could be a result of taking funding away from existing programs or new revenue through a tax. The kinds of taxes that could deliver revenue at this level could be property taxes, a sales tax, or an additional corporate tax. In 2019, Oregon passed a $1B corporate tax to fund schools.
+              </small>
             </StyledLabel>
           </Row>
 
