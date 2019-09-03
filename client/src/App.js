@@ -81,7 +81,9 @@ function App() {
 
   const handleClose = () => setState({ modalOpen: false });
 
-  const handleSubmit = values => axios.post('/api', { data: values })
+  const handleSubmit = values => axios.post('/api', { data: values }, {
+    headers: { 'Access-Control-Allow-Origin': '*' },
+  })
     .then((response) => {
       let message = '';
       if (response.data) {
