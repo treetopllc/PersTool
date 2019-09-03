@@ -1,1 +1,1 @@
-web: waitress-serve --url-scheme=https --host=perstool.herokuapp.com --call 'pers:create_app'
+web: waitress-serve --call 'pers:create_app'
