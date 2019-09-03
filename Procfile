@@ -1,1 +1,1 @@
-web: gunicorn -b 0.0.0.0:5000 -b [::1]:5000 pers.wsgi:app
+web: gunicorn -b 0.0.0.0:${PORT} -b [::1]:${PORT} pers.wsgi:app
