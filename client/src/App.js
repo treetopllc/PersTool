@@ -81,7 +81,12 @@ function App() {
 
   const handleClose = () => setState({ modalOpen: false });
 
-  const handleSubmit = values => axios.post('/api', { data: values })
+  axios.defaults.baseURL = 'https://perstool.herokuapp.com';
+  const handleSubmit = values => axios.request({
+    method: 'post',
+    url: '/api',
+    data: { data: values },
+  })
     .then((response) => {
       let message = '';
       if (response.data) {

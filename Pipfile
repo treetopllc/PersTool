@@ -12,6 +12,7 @@ flask = "*"
 flask-cors = "*"
 matplotlib = "*"
 flask-api = "*"
+waitress = "*"
 
 [requires]
 python_version = "3.7"

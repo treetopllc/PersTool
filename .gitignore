@@ -11,6 +11,7 @@
 
 # production
 /build
+client/
 
 # misc
 .DS_Store
@@ -26,4 +27,18 @@ yarn-error.log*
 package-lock.json
 
 .vscode
-__pycache__
+
+venv/
+
+*.pyc
+__pycache__/
+
+instance/
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+dist/
+build/
+*.egg-info/

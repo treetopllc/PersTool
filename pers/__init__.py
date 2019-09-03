@@ -1,5 +1,8 @@
+import os
+from waitress import serve
+
 from flask import Flask, request, jsonify, make_response
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_api import status
 
 import numpy as np
@@ -287,154 +290,181 @@ def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll
 
 	return data, year, paid
 
+def create_app(test_config=None):
+    # create and configure the app
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_mapping(
+        SECRET_KEY='dev',
+    )
 
-@app.route('/api', methods=["POST"])
-def post():
-    normal_cost = 720.881725
+    @app.route('/api', methods=["OPTIONS", "POST"])
+    @cross_origin()
+    def create_api():
+        if request.method == "OPTIONS": # CORS preflight
+            return _build_cors_prelight_response()
+        elif request.method == "POST": # The actual request following the preflight
+            return _corsify_actual_response(jsonify(post()))
+        else:
+            raise RuntimeError("Weird - don't know how to handle method {}".format(request.method))
+    def _build_cors_prelight_response():
+    	response = make_response()
+    	response.headers.add("Access-Control-Allow-Origin", "*")
+    	response.headers.add("Access-Control-Allow-Headers", "*")
+    	response.headers.add("Access-Control-Allow-Methods", "*")
+    	return response
+    def _corsify_actual_response(response):
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
 
-    req = request.json.get("data")
-    question = int(req.get("question"))
-    if question == 1:
-        amperiod = float(req.get("amperiod"))
-    if question == 3:
-        pay = float(req.get("pay"))
-        if pay < normal_cost:
-            return "Pay Too Low"
-    if question == 2:
-        contribution_rate = float(req.get('contribution_rate'))
-    ual = int(req.get('ual'))
-    sual = int(req.get('sual'))
-    RR = float(req.get('RR'))
-    inflation = float(req.get('inflation'))
-    tax = float(req.get('tax'))
+    def post():
+    	normal_cost = 720.881725
 
-    if sual != 0:
-        ual = ual - sual
+    	req = request.json.get("data")
+    	question = int(req.get("question"))
+    	if question == 1:
+    		amperiod = float(req.get("amperiod"))
+    	if question == 3:
+    		pay = float(req.get("pay"))
+    		if pay < normal_cost:
+    			return "Pay Too Low"
+    	if question == 2:
+    		contribution_rate = float(req.get('contribution_rate'))
+    	ual = int(req.get('ual'))
+    	sual = int(req.get('sual'))
+    	RR = float(req.get('RR'))
+    	inflation = float(req.get('inflation'))
+    	tax = float(req.get('tax'))
 
-    payroll_total = {
-		2020: 11025.585615,
-		2021: 11347.711070,
-		2022: 11810.882950,
-		2023: 12155.951791,
-		2024: 12652.113088,
-		2025: 13021.759457,
-		2026: 13553.259843,
-		2027: 13949.234274,
-		2028: 14518.590775,
-		2029: 14942.768486,
-		2030: 15552.677403,
-		2031: 16007.067171,
-		2032: 16660.416851,
-		2033: 17147.170530,
-		2034: 17847.055042,
-		2035: 18368.477751,
-		2036: 19118.211537
-		}
+    	if sual != 0:
+    		ual = ual - sual
 
-	# pension obligation fund debt service
-    pob = (
-		573.4343585,
-		596.8398425,
-		605.7471839,
-		630.4715587,
-		647.8775716,
-		674.3215541,
-		676.224210,
-		703.8251982,
-		744.2061759,
-		774.5819382,
-		326.541601,
-		339.8698296,
-		199.5221645,
-		20.76659263,
-		13.14852491,
-		13.6851994,
-		6.706822572,
-		6.980570433
-		)
+    	payroll_total = {
+			2020: 11025.585615,
+			2021: 11347.711070,
+			2022: 11810.882950,
+			2023: 12155.951791,
+			2024: 12652.113088,
+			2025: 13021.759457,
+			2026: 13553.259843,
+			2027: 13949.234274,
+			2028: 14518.590775,
+			2029: 14942.768486,
+			2030: 15552.677403,
+			2031: 16007.067171,
+			2032: 16660.416851,
+			2033: 17147.170530,
+			2034: 17847.055042,
+			2035: 18368.477751,
+			2036: 19118.211537
+			}
 
-    normal_cost = 720.881725
-    #read in historical data
-    hist_data = pandas.read_csv('historical.csv')
-    normalcost_hist = hist_data.NormalCost.tolist()
-    pay_hist = hist_data.Pay.tolist()
-    UALpayment_hist = hist_data.UALpayment.tolist()
-    POB_hist = hist_data.POB.tolist()
-    UAL_hist = hist_data.UAL.tolist()
-    year = 2020
+		# pension obligation fund debt service
+    	pob = (
+			573.4343585,
+			596.8398425,
+			605.7471839,
+			630.4715587,
+			647.8775716,
+			674.3215541,
+			676.224210,
+			703.8251982,
+			744.2061759,
+			774.5819382,
+			326.541601,
+			339.8698296,
+			199.5221645,
+			20.76659263,
+			13.14852491,
+			13.6851994,
+			6.706822572,
+			6.980570433
+			)
 
-    data = []
-    resp = []
+    	normal_cost = 720.881725
+		#read in historical data
+    	hist_data = pandas.read_csv('historical.csv')
+    	normalcost_hist = hist_data.NormalCost.tolist()
+    	pay_hist = hist_data.Pay.tolist()
+    	UALpayment_hist = hist_data.UALpayment.tolist()
+    	POB_hist = hist_data.POB.tolist()
+    	UAL_hist = hist_data.UAL.tolist()
+    	year = 2020
 
-    # some constant monthly growthrates, we assume 3.5% per year for these
-    monthly_payroll_growthrate = monthly_normalcost_growthrate = 1.035 ** (1/12)
-    RRinf = RR + inflation - 1
-    RRinf_monthly = RRinf ** (1/12)
-	# UAL should continue to grow at a constant rate regardless of inflation and/or RR
-    ual_growth = 1.072
-	# this is the "value" of the number of months in a year accounting for payroll growthrate. weird, I know.
-    month_val =  1
-    month_interest = 1
-    for i in range(0, 11):
-    	month_interest *= monthly_payroll_growthrate
-    	month_val += month_interest
+    	data = []
+    	resp = []
 
-    if question == 1:
-    	data, end_year, paid = calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_growthrate, month_val, year, payroll_total, normal_cost, monthly_normalcost_growthrate, ual_growth)
-    elif question == 2:
-    	data, end_year, paid = calculate_contribution_rate(contribution_rate, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth)
-    elif question == 3:
-    	data, end_year, paid = calculate_contribution(pay, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth)
+		# some constant monthly growthrates, we assume 3.5% per year for these
+    	monthly_payroll_growthrate = monthly_normalcost_growthrate = 1.035 ** (1/12)
+    	RRinf = RR + inflation - 1
+    	RRinf_monthly = RRinf ** (1/12)
+		# UAL should continue to grow at a constant rate regardless of inflation and/or RR
+    	ual_growth = 1.072
+		# this is the "value" of the number of months in a year accounting for payroll growthrate. weird, I know.
+    	month_val =  1
+    	month_interest = 1
+    	for i in range(0, 11):
+    		month_interest *= monthly_payroll_growthrate
+    		month_val += month_interest
 
-    if paid == False or end_year >= 2060:
-    	return make_response(jsonify(False), status.HTTP_200_OK)
+    	if question == 1:
+    		data, end_year, paid = calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_growthrate, month_val, year, payroll_total, normal_cost, monthly_normalcost_growthrate, ual_growth)
+    	elif question == 2:
+    		data, end_year, paid = calculate_contribution_rate(contribution_rate, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth)
+    	elif question == 3:
+    		data, end_year, paid = calculate_contribution(pay, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth)
 
-    sual_list, tax_list, sualend_year = raisethemoney(sual, tax, RR, end_year, inflation)
-    data = np.asarray(data)
+    	if paid == False or end_year >= 2060:
+    		return False
+
+    	sual_list, tax_list, sualend_year = raisethemoney(sual, tax, RR, end_year, inflation)
+    	data = np.asarray(data)
 
 
-    #force them in
-    if sual_list.shape[0] > data.shape[0]:
-        data = np.pad(data, ((0,sual_list.shape[0] - data.shape[0]),(0,0)), 'constant')
-    elif sual_list.shape[0] < data.shape[0]:
-        sual_list = np.pad(sual_list, (0, data.shape[0]-sual_list.shape[0]), 'constant')
-        tax_list = np.pad(tax_list, (0, data.shape[0]-tax_list.shape[0]), 'constant')
+		#force them in
+    	if sual_list.shape[0] > data.shape[0]:
+    		data = np.pad(data, ((0,sual_list.shape[0] - data.shape[0]),(0,0)), 'constant')
+    	elif sual_list.shape[0] < data.shape[0]:
+    		sual_list = np.pad(sual_list, (0, data.shape[0]-sual_list.shape[0]), 'constant')
+    		tax_list = np.pad(tax_list, (0, data.shape[0]-tax_list.shape[0]), 'constant')
 
-    data=np.insert(data, 3, sual_list, axis = 1)
-    data=np.insert(data, 4, tax_list, axis = 1)
+    	data=np.insert(data, 3, sual_list, axis = 1)
+    	data=np.insert(data, 4, tax_list, axis = 1)
 
-    if data.shape[0] < 15:
-        data = np.pad(data, ((0, 15 -  data.shape[0]),(0,0)), 'constant')
+    	if data.shape[0] < 15:
+    		data = np.pad(data, ((0, 15 -  data.shape[0]),(0,0)), 'constant')
 
-    end_year = 2019+data.shape[0]
-    time_range = range(2020, end_year+1)
+    	end_year = 2019+data.shape[0]
+    	time_range = range(2020, end_year+1)
 
-    ual_response = list(data[:,1])
-    sual_response = list(data[:,3])
-    nc_response = list(data[:,5])
-    pay_response = list(data[:,0]-data[:,5])
-    tax_response = list(data[:,4])
-    pob_response = pob[3:]
+    	ual_response = list(data[:,1])
+    	sual_response = list(data[:,3])
+    	nc_response = list(data[:,5])
+    	pay_response = list(data[:,0]-data[:,5])
+    	tax_response = list(data[:,4])
+    	pob_response = pob[3:]
 
-    i = 0
+    	i = 0
 
-	# add error handling
-    while i < len(time_range):
-        respobj = {
-            "year" : time_range[i],
-            "ual" : ual_response[i],
-            "sual" : sual_response[i],
-            "normal_cost": nc_response[i],
-            "payment" : pay_response[i],
-            "tax": tax_response[i],
-			"end_year": end_year,
-            }
-        if time_range[i] < 2035:
-            respobj["pob"] = pob_response[i]
-        resp.append(respobj)
-        i += 1
+		# add error handling
+    	while i < len(time_range):
+    		respobj = {
+				"year" : time_range[i],
+				"ual" : ual_response[i],
+				"sual" : sual_response[i],
+				"normal_cost": nc_response[i],
+				"payment" : pay_response[i],
+				"tax": tax_response[i],
+				"end_year": end_year,
+				}
+    		if time_range[i] < 2035:
+    			respobj["pob"] = pob_response[i]
+    		resp.append(respobj)
+    		i += 1
 
-    return make_response(jsonify(resp), status.HTTP_200_OK)
+    	return resp
 
-if __name__ == "__main__":
-    app.run()
+    return app
+
+# if __name__ == "__main__":
+# 	from os import environ
+# 	serve(app, host='0.0.0.0', port=environ.get("PORT", 5000), url_scheme='https')
