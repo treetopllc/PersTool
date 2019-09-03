@@ -2,7 +2,7 @@ import os
 from waitress import serve
 
 from flask import Flask, request, jsonify, make_response
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_api import status
 
 import numpy as np
@@ -10,7 +10,7 @@ import pandas
 import logging
 
 app = Flask(__name__)
-CORS(app, resources=r'/api/*')
+CORS(app)
 
 def raisethemoney(sual, tax, RR, year, inflation):
 	sual_list= [sual]
@@ -298,6 +298,7 @@ def create_app(test_config=None):
     )
 
     @app.route('/api', methods=["GET", "POST"])
+    @cross_origin()
     def post():
     	normal_cost = 720.881725
 

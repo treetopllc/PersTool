@@ -81,10 +81,7 @@ function App() {
 
   const handleClose = () => setState({ modalOpen: false });
 
-  axios.defaults.headers.common.Authorization = 'dev';
-  const handleSubmit = values => axios.post('/api', { data: values }, {
-    headers: { 'Access-Control-Allow-Origin': '*' },
-  })
+  const handleSubmit = values => axios.post('http://perstool.herokuapp.com/api', { data: values })
     .then((response) => {
       let message = '';
       if (response.data) {
