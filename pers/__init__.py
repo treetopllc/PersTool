@@ -297,13 +297,13 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
     )
 
-    @app.route('/api', methods=["GET", "POST", "OPTIONS"])
+    @app.route('/api', methods=["POST", "OPTIONS"])
     @cross_origin()
     def create_api():
         if request.method == "OPTIONS": # CORS preflight
             return _build_cors_prelight_response()
         elif request.method == "POST": # The actual request following the preflight
-            return _corsify_actual_response(jsonify(post(), status.HTTP_200_OK))
+            return _corsify_actual_response(jsonify(post()))
         else:
             raise RuntimeError("Weird - don't know how to handle method {}".format(request.method))
     def _build_cors_prelight_response():
