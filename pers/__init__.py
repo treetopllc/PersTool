@@ -297,8 +297,25 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
     )
 
-    @app.route('/api', methods=["POST"])
+    @app.route('/api', methods=["GET", "POST"])
     @cross_origin()
+    def create_api():
+        if request.method == "OPTIONS": # CORS preflight
+            return _build_cors_prelight_response()
+        elif request.method == "POST": # The actual request following the preflight
+            return _corsify_actual_response(jsonify(post(), status.HTTP_200_OK))
+        else:
+            raise RuntimeError("Weird - don't know how to handle method {}".format(request.method))
+    def _build_cors_prelight_response():
+    	response = make_response()
+    	response.headers.add("Access-Control-Allow-Origin", "*")
+    	response.headers.add("Access-Control-Allow-Headers", "*")
+    	response.headers.add("Access-Control-Allow-Methods", "*")
+    	return response
+    def _corsify_actual_response(response):
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+
     def post():
     	normal_cost = 720.881725
 
@@ -444,7 +461,7 @@ def create_app(test_config=None):
     		resp.append(respobj)
     		i += 1
 
-    	return make_response(jsonify(resp), status.HTTP_200_OK)
+    	return resp
 
     @app.errorhandler(500)
     def server_error(e):
