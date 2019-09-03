@@ -1,1 +1,1 @@
-web: waitress-serve --call 'pers:create_app'
+web: waitress-serve --host='0.0.0.0' --call 'pers:create_app'
