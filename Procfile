@@ -1,1 +1,1 @@
-web: gunicorn -w 4 pers:create_app
+web: gunicorn -w 4 pers.wsgi:app
