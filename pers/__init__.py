@@ -297,7 +297,7 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
     )
 
-    @app.route('/api', methods=["GET", "POST"])
+    @app.route('/api', methods=["POST"])
     @cross_origin()
     def post():
     	normal_cost = 720.881725
