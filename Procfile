@@ -1,1 +1,1 @@
-web: waitress-serve --host='0.0.0.0' --call 'pers:create_app'
+web: waitress-serve --host='0.0.0.0' --port=5000 --call 'pers:create_app'
