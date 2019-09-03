@@ -296,7 +296,9 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
     )
-
+    @app.route('/api', methods=["GET"])
+    def get():
+    	return make_response(jsonify({'Message': 'Make a request'}), status.HTTP_200_OK)
     @app.route('/api', methods=["POST"])
     def post():
     	normal_cost = 720.881725
