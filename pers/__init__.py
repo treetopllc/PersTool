@@ -313,7 +313,6 @@ def create_app(test_config=None):
     	response.headers.add("Access-Control-Allow-Methods", "*")
     	return response
     def _corsify_actual_response(response):
-        response.headers.add("Access-Control-Allow-Origin", "*")
         return response
 
     def post():
