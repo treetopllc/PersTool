@@ -1,1 +1,1 @@
-web: GUNICORN_CMD_ARGS="--bind=127.0.0.1 --workers=4" gunicorn pers.wsgi:app
+web: gunicorn -b 127.0.0.1:5000 -b perstool.herokuapp.com -b [::1]:5000 pers.wsgi:app
