@@ -81,6 +81,7 @@ function App() {
 
   const handleClose = () => setState({ modalOpen: false });
 
+  axios.defaults.headers.common.Authorization = 'dev';
   const handleSubmit = values => axios.post('/api', { data: values }, {
     headers: { 'Access-Control-Allow-Origin': '*' },
   })
