@@ -85,16 +85,7 @@ function App() {
   const handleSubmit = values => axios.request({
     method: 'post',
     url: '/api',
-    data: values,
-    headers: {
-      Host: 'perstool.herokuapp.com',
-      Accept: '*/*',
-      'Access-Control-Allow-Origin': '*',
-    },
-    proxy: {
-      host: 'perstool.herokuapp.com',
-    },
-
+    data: { data: values },
   })
     .then((response) => {
       let message = '';
