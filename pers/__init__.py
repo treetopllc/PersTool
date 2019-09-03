@@ -297,7 +297,7 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
     )
 
-    @app.route('/api', methods=["GET", "POST"])
+    @app.route('/api', methods=["GET", "POST", "OPTIONS"])
     @cross_origin()
     def create_api():
         if request.method == "OPTIONS": # CORS preflight
