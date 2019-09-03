@@ -1,6 +1,8 @@
-from pers import app
+from pers import create_app
 import os
 from waitress import serve
+
+app = create_app()
 
 if __name__ == "__main__":
     from os import environ
