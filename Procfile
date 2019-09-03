@@ -1,1 +1,1 @@
-web: FLASK_APP=$PWD/__init__.py FLASK_ENV=production python3 -m flask run
+web: waitress-serve --port=5000 --url-scheme=https --call 'pers:create_app'
