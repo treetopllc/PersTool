@@ -463,4 +463,4 @@ def create_app(test_config=None):
     return app
 
 if __name__ == "__main__":
-    serve(app, port=5000, url_scheme='https')
+    serve(app, url_scheme='https')
