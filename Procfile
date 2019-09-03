@@ -1,1 +1,1 @@
-web: waitress-serve --port=5000 --url-scheme=https --call 'pers:create_app'
+web: gunicorn -w 4 pers:create_app
