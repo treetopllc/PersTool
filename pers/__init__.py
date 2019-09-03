@@ -303,7 +303,7 @@ def create_app(test_config=None):
         if request.method == "OPTIONS": # CORS preflight
             return _build_cors_prelight_response()
         elif request.method == "POST": # The actual request following the preflight
-            return _corsify_actual_response(make_response(jsonify(post(), status.HTTP_200_OK)))
+            return _corsify_actual_response(jsonify(post(), status.HTTP_200_OK))
         else:
             raise RuntimeError("Weird - don't know how to handle method {}".format(request.method))
     def _build_cors_prelight_response():
@@ -414,7 +414,7 @@ def create_app(test_config=None):
     		data, end_year, paid = calculate_contribution(pay, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth)
 
     	if paid == False or end_year >= 2060:
-    		return make_response(jsonify(False), status.HTTP_200_OK)
+    		return False
 
     	sual_list, tax_list, sualend_year = raisethemoney(sual, tax, RR, end_year, inflation)
     	data = np.asarray(data)
