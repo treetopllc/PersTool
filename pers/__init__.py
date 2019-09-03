@@ -10,7 +10,7 @@ import pandas
 import logging
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources=r'/api/*')
 
 def raisethemoney(sual, tax, RR, year, inflation):
 	sual_list= [sual]
@@ -447,6 +447,10 @@ def create_app(test_config=None):
 
     	return make_response(jsonify(resp), status.HTTP_200_OK)
 
+    @app.errorhandler(500)
+    def server_error(e):
+        logging.exception('An error occurred during a request. %s', e)
+        return "An internal error occured", 500
 
     return app
 
