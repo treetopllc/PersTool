@@ -4,7 +4,9 @@ import {
   Modal, Divider, Message,
 } from 'semantic-ui-react';
 
-import { ResultsGraph } from './Graph';
+import { currentState } from '../data/status_quo';
+
+import ResultsGraph from './Graph';
 
 const ControlledModal = ({
   handleClose, modalState,
@@ -29,9 +31,15 @@ const ControlledModal = ({
         { modalState.results && Object.keys(modalState.results).length
           ? (
             <Fragment>
-              <ResultsGraph resultsState={modalState.results} />
+              <ResultsGraph resultsState={currentState} />
               <Divider horizontal>
-                It will take
+                The status quo will take
+                {' '}
+                {getYears(currentState)}
+                {' '}
+                years.
+                <br />
+                Your choices will take
                 {' '}
                 {getYears(modalState.results)}
                 {' '}

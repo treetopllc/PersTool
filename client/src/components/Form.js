@@ -94,8 +94,23 @@ const TestForm = (props) => {
   return (
     <Form onSubmit={handleSubmit}>
       <Row>
+        <h4>
+          Unfunded Liability: March 2019
+          {' '}
+          <StyledRightLabel>$26.6 B</StyledRightLabel>
+
+        </h4>
+        <small>
+          The Unfunded Accrued Liability (UAL) is the difference between promised retirement benefits and the amount that was invested and saved. The current UAL of $26.6B represents ~27% of the total amount needed to make good on promises to retirees. The Oregon Treasurer&rsquo;s office manages the other 73% (about $73.4B) in a mixture of stocks, bonds and other investments. This year Oregon governments &ndash;&ndash; from schools to cities, counties, fire departments and community colleges &ndash;- will invest more than $2B into that savings fund as part of a plan to fully fund the system over the next 20 years.
+          <br />
+          <br />
+          The problem? That $2B comes out of critical current services like teachers, mental health care, bridge maintenance and public safety. And it is growing faster than more local areas&rsquo; tax base.
+        </small>
+      </Row>
+      <Row>
         <StyledLabel htmlFor="question">
           <h4>Method:</h4>
+          <small>Over what period of time should we invest in the PERS Fund? What percent of their budgets should schools, cities, counties and community colleges be expected to pay into the PERS Fund every month? Should we be setting aside more money now to invest in the PERS Fund more quickly?  Use the three buttons below to explore these options. </small>
           <StyledButtonGroup>
             <Field
               name="question"
@@ -132,6 +147,8 @@ const TestForm = (props) => {
           <div>
             <StyledLabel htmlFor="amperiod">
               <h4>Years:</h4>
+              Make the amortization pay-down timeline faster or slower to see how it changes the payment plan.
+
               <StyledButtonGroup>
                 <Field
                   name="amperiod"
@@ -262,14 +279,6 @@ const TestForm = (props) => {
             </StyledLabel>
           </div>
         )}
-      </Row>
-
-      <Row>
-        <h4>
-          Unfunded Liability:
-          {' '}
-          <StyledRightLabel>$26.6 B</StyledRightLabel>
-        </h4>
       </Row>
 
       <Row>

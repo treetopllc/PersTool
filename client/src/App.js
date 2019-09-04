@@ -142,12 +142,23 @@ function App() {
   return (
     <Router>
       <GlobalStyle />
-      <Container style={{ margin: 20 }}>
+      <Container style={{ margin: 20, minHeight: 400 }}>
         <h1>PERS Tool</h1>
 
         <Navigation />
 
-        <Route path="/" exact component={() => <div>Profile</div>} />
+        <Route
+          path="/"
+          exact
+          component={() => (
+            <div>
+              <p>Ready to roll up your sleeves to tackle Oregon&rsquo;s intractable budget woes? This calculator provides three options to get started.</p>
+
+              <p>This stuff is complicated. We&rsquo;ve made choices to simplify it so that every day people like us can visualize our options and start having more open and factual conversations about the challenges we face &ndash;&ndash; and how we can solve them together. If you have questions about how this works, please check out our Assumptions or send an email to our Research Associate, Marina.</p>
+
+            </div>
+          )}
+        />
         <Route path="/calculator" component={() => <Form onSubmit={handleSubmit} />} />
         <Route path="/assumptions" component={() => <div>Assumptions</div>} />
         <Route path="/about" component={() => <div>About</div>} />

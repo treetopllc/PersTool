@@ -25,12 +25,10 @@ const createStackLabels = (data) => {
   }
 };
 
-// eslint-disable-next-line import/prefer-default-export
-export const ResultsGraph = ({
+const ResultsGraph = ({
   resultsState: {
     normalCostArray,
     payArray,
-    pobArray,
     ualArray,
   },
 }) => (
@@ -99,3 +97,6 @@ export const ResultsGraph = ({
     </VictoryStack>
   </VictoryChart>
 );
+
+
+export default ResultsGraph;
