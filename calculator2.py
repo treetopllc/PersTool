@@ -279,7 +279,7 @@ def calculate_contribution_rate(contribution_rate, ual, sual, RR, inflation, yea
 	return data, year, paid
 
 
-#contribution rate as a portion of payroll
+#contribution as a flat rate (plus inflation)
 def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth):
 	year = 2020
 	pay2019 = 1451.26973004236
@@ -288,13 +288,22 @@ def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll
 	RRinf = RR
 	data = []
 	ual_growth_monthly = ual_growth ** (1/12)
+	month = 0
+	#actual_fund_growth = needed_fund_growth = needed_fund_growth_init = ual_pay_monthly_init = ual_pay_monthly 
+	monthly_contribution = contribution / month_val
 	paid = False
+	RR_monthly_actual = 1.09 ** (1/12)
+
+	monthly_payroll = payroll_total[2020] / month_val
 	inflation_monthly = inflation ** (1/12)
+	ual_growth = ual
 
 	while ual > 0:
 		if year >= 2120:
 			break
 		if ual <= 0 and sual != 0 and (sual_list[year-2020] < 0):
+			break
+		if year == 2040:
 			break
 
 		pay = 0
@@ -306,26 +315,34 @@ def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll
 			if ual <= 0:
 				paid = True
 				print("Year: {}, month: {}".format(year, i+1))
-			if year > 2022:
-				monthly_payroll = (payroll_total[2022] / month_val * monthly_payroll_growthrate ** ((year-2022) * 12 + i)) #* contribution_rate
-			else:
-				monthly_payroll = (payroll_total[year] / month_val) * monthly_payroll_growthrate ** i
+			#if year > 2022:
+			#	monthly_payroll = (payroll_total[2022] / month_val * monthly_payroll_growthrate ** ((year-2022) * 12 + i)) #* contribution_rate
+			#else:
+			#	monthly_payroll = (payroll_total[year] / month_val) * monthly_payroll_growthrate ** i
 
 			nc = get_normal_cost(i, year)
 			cr = get_contribution_rate(i, year)
 			calculated_contribution = get_contributions(i, year)
 			calculated_normal_cost = nc * calculated_contribution
-			monthly_contribution = (monthly_contribution - calculated_normal_cost) * inflation_monthly + calculated_normal_cost
+			#monthly_contribution = (monthly_contribution - calculated_normal_cost) * inflation_monthly + calculated_normal_cost
 			ual_payment = monthly_contribution - calculated_normal_cost
+			ual_growth = ual_growth * RRinf_monthly
 			if year == 2020 and i == 0:
-				ual = (ual - pay2019) * ual_growth
+				actual_fund_growth = ual_payment
 			else:
-				ual = ual * ual_growth_monthly - ual_payment
+				actual_fund_growth = actual_fund_growth * RR_monthly_actual + ual_payment
+
+
+			ual = ual_growth - actual_fund_growth
+
+			print("year: {}, month: {}, nc: {}, ual: {}, ual_pay_monthly: {}, monthly_payroll: {}".format(year, i+1, calculated_normal_cost, ual, ual_payment, monthly_payroll))
+
+			month += 1
+			monthly_contribution = monthly_contribution * inflation_monthly 
 
 			pay += ual_payment
 			contribution += monthly_contribution
 			normal_cost += calculated_normal_cost
-			month += 1
 
 		if year >= 2036:
 			payroll_total_annual = payroll_total[2036]
