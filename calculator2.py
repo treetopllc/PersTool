@@ -276,9 +276,9 @@ def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll
 	paid = False
 
 	while ual > 0:
-		if ual <= 0 and sual != 0 and (sual_list[year-2020] < 0):
+		if year >= 2120:
 			break
-		if year == 2040:
+		if ual <= 0 and sual != 0 and (sual_list[year-2020] < 0):
 			break
 
 		pay = 0
@@ -407,7 +407,7 @@ def main():
 		data, end_year, paid = calculate_contribution(question_param, ual, sual, RR, inflation, year, payroll_total, month_val, payroll_growthrate, ual_growth)
 
 	if paid == False or end_year >= 2060:
-		return paid
+		return False
 
 	sual_list, tax_list, sualend_year = raisethemoney(sual, tax, RR, end_year, inflation)
 	data = np.asarray(data)
@@ -426,7 +426,7 @@ def main():
 		data = np.pad(data, ((0, 15 -  data.shape[0]),(0,0)), 'constant')
 
 	plotstuff(data, UAL_hist, normalcost_hist, UALpayment_hist, POB_hist, pob)
-	return paid
+	return True
 
 if __name__=="__main__":
 	main()
