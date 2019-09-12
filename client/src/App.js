@@ -14,6 +14,7 @@ import { createGlobalStyle } from 'styled-components';
 
 import Form from './components/Form';
 import ControlledModal from './components/Modal';
+import Windfall from './components/Windfall';
 
 
 const GlobalStyle = createGlobalStyle`
@@ -81,10 +82,10 @@ function App() {
 
   const handleClose = () => setState({ modalOpen: false });
 
-  axios.defaults.baseURL = 'https://perstool.herokuapp.com';
+  // axios.defaults.baseURL = 'https://perstool.herokuapp.com';
   const handleSubmit = values => axios.request({
     method: 'post',
-    url: '/api',
+    url: 'http://127.0.0.1:8000/api',
     data: { data: values },
   })
     .then((response) => {
@@ -162,7 +163,7 @@ function App() {
         <Route path="/calculator" component={() => <Form onSubmit={handleSubmit} />} />
         <Route path="/assumptions" component={() => <div>Assumptions</div>} />
         <Route path="/about" component={() => <div>About</div>} />
-        <Route path="/windfall" component={() => <div>Windfall</div>} />
+        <Route path="/windfall" component={() => <Windfall />} />
 
         <ControlledModal handleClose={handleClose} modalState={modalState} />
       </Container>
