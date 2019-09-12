@@ -122,23 +122,27 @@ def get_contributions(month, year):
 
 
 #Amortization period
-def calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_growthrate, month_val, year, payroll_total, normal_cost, monthly_normalcost_growthrate, ual_growth):
+def calculate_amortization(amperiod, ual, sual, RR, payroll_growthrate, month_val, year, payroll_total, ual_growth):
 	pay2019 = 1302.71
 	data = []
-	ual_growth_monthly = ual_growth ** (1/12)
 	paid = False
 	sual_list= [sual]
 
+	#monthly rates
+	ual_growth_monthly = RRinf_monthly = ual_growth ** (1/12)
+	monthly_payroll_growthrate = payroll_growthrate ** (1/12)
+	RR_monthly_actual = RR ** (1/12)
+
+	#initial values
 	#discount takes out interest rate over the full period of time
 	discount = (1 - (monthly_payroll_growthrate / RRinf_monthly) ** (amperiod * 12)) / (RRinf_monthly - monthly_payroll_growthrate)
 	ual_pay_monthly = ual / discount
-	#normal_cost = normal_cost / month_val
-	RR_monthly_actual = 1.09 ** (1/12)
-	#print(ual_pay_monthly)
-	#input()
 	month = 1
 	actual_fund_growth = needed_fund_growth = needed_fund_growth_init = ual_pay_monthly_init = ual_pay_monthly 
 	ual_growth = ual * RRinf_monthly
+	monthly_payroll = payroll_total[year] / month_val
+	print(monthly_payroll)
+	input()
 
 	while amperiod > 0:
 		if year >= 2120:
@@ -151,10 +155,10 @@ def calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_g
 		pay = 0
 		normal_cost_annual = 0
 		for i in range(0, 12):
-			if year > 2036:
-				monthly_payroll = payroll_total[2036] / month_val * monthly_payroll_growthrate ** ((year-2037) * 12 + i + 1)
-			else:
-				monthly_payroll = payroll_total[year] / 12
+			#if year > 2036:
+			#	monthly_payroll = payroll_total[2036] / month_val * monthly_payroll_growthrate ** ((year-2037) * 12 + i + 1)
+			#else:
+			#	monthly_payroll = payroll_total[year] / 12
 
 			nc = get_normal_cost(i, year)
 			cr = get_contribution_rate(i, year)
@@ -162,7 +166,8 @@ def calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_g
 			calculated_normal_cost = nc * calculated_contribution
 
 			ual = ual_growth - actual_fund_growth
-			#print("year: {}, month: {}, nc: {}, ual: {}, ual_pay_monthly: {}".format(year, i+1, calculated_normal_cost, ual, ual_pay_monthly))
+
+			print("year: {}, month: {}, nc: {}, ual: {}, ual_pay_monthly: {}, monthly_payroll: {}".format(year, i+1, calculated_normal_cost, ual, ual_pay_monthly, monthly_payroll))
 
 			#accumulate the yearly totals
 			payroll += monthly_payroll
@@ -170,19 +175,18 @@ def calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_g
 			normal_cost_annual += calculated_normal_cost
 
 			#now update the values for each month
-			#ual = ual * ual_growth_monthly - ual_pay_monthly
-
-
-			#ual_pay_monthly = ual_pay_monthly * monthly_payroll_growthrate
 			ual_pay_monthly = ual_pay_monthly_init * monthly_payroll_growthrate ** month + ((needed_fund_growth * RRinf_monthly) - (actual_fund_growth * RR_monthly_actual))
 			actual_fund_growth = actual_fund_growth * RR_monthly_actual + ual_pay_monthly
 			needed_fund_growth = needed_fund_growth * RRinf_monthly + (needed_fund_growth_init * monthly_payroll_growthrate ** month)
 			ual_growth = ual_growth * RRinf_monthly
-
-
-			#print(ual_pay_monthly)
-			#input()
+			if year == 2021 and i == 5:
+				monthly_payroll = 930.803690708086
+			elif year == 2042 and i == 10:
+				monthly_payroll = 1939.03460093616
+			else:
+				monthly_payroll = monthly_payroll * monthly_payroll_growthrate
 			month += 1
+
 			if ual <= 0:
 				paid = True
 
@@ -422,10 +426,9 @@ def main():
 	year = 2020
 
 	# some constant monthly growthrates, we assume 3.5% per year for these
+	payroll_growthrate = 1.035
 	monthly_payroll_growthrate = monthly_normalcost_growthrate = 1.035 ** (1/12)
-	#RRinf = RR + inflation - 1
-	RRinf = RR
-	RRinf_monthly = RRinf ** (1/12)
+	RR_monthly_actual = RR ** (1/12)
 	# UAL should continue to grow at a constant rate regardless of inflation and/or RR
 	ual_growth = 1.072
 	# this is the "value" of the number of months in a year accounting for payroll growthrate. weird, I know.
@@ -436,7 +439,7 @@ def main():
 		month_val += month_interest
 
 	if question == 1:
-		data, end_year, paid = calculate_amortization(question_param, ual, sual, RRinf_monthly, monthly_payroll_growthrate, month_val, year, payroll_total, normal_cost, monthly_normalcost_growthrate, ual_growth)
+		data, end_year, paid = calculate_amortization(question_param, ual, sual, RR, payroll_growthrate, month_val, year, payroll_total, ual_growth)
 	elif question == 2:
 		data, end_year, paid = calculate_contribution_rate(question_param, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth)
 	elif question == 3:
