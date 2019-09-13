@@ -176,13 +176,14 @@ def calculate_amortization(amperiod, ual, sual, RR, payroll_growthrate, month_va
 			payroll += monthly_payroll
 			pay += ual_pay_monthly
 			normal_cost_annual += calculated_normal_cost
+			print("year: {}, month: {}, nc: {}, ual pay: {}, payroll: {}, ual: {}".format(year, i+1, calculated_normal_cost, ual_pay_monthly, monthly_payroll, ual))
 
 			#now update the values for each month
 			ual_pay_monthly = ual_pay_monthly_init * monthly_payroll_growthrate ** month + ((needed_fund_growth * RRinf_monthly) - (actual_fund_growth * RR_monthly_actual))
 			actual_fund_growth = actual_fund_growth * RR_monthly_actual + ual_pay_monthly
 			needed_fund_growth = needed_fund_growth * RRinf_monthly + (needed_fund_growth_init * monthly_payroll_growthrate ** month)
 			ual_growth = ual_growth * RRinf_monthly
-			monthly_payroll = get_monthly_payroll(year, i, monthly_payroll, monthly_payroll_growthrate)
+			monthly_payroll = get_monthly_payroll(i, year, monthly_payroll, monthly_payroll_growthrate)
 			month += 1
 
 			if ual <= 0:
@@ -236,8 +237,9 @@ def calculate_contribution_rate(contribution_rate, ual, sual, RR, year, payroll_
 				ual_growth = ual_growth * RRinf_monthly
 			ual = ual_growth - actual_fund_growth
 
+			print("year: {}, month: {}, nc: {}, ual pay: {}, payroll: {}, ual: {}".format(year, i+1, calculated_normal_cost, ual_pay_monthly, monthly_payroll, ual))
 			#update monthly values
-			monthly_payroll = get_monthly_payroll(year, i, monthly_payroll, monthly_payroll_growthrate)
+			monthly_payroll = get_monthly_payroll(i, year, monthly_payroll, monthly_payroll_growthrate)
 			month += 1
 
 			#accumulate annual totals
@@ -250,6 +252,7 @@ def calculate_contribution_rate(contribution_rate, ual, sual, RR, year, payroll_
 		else:
 			payroll_total_annual = payroll_total[year]
 
+		#skeptical that the contribution rate is correct but it's not used anywhere so left as-is
 		data.append([pay, ual, contribution / payroll_total_annual, normal_cost_annual])
 		year = year + 1
 
@@ -300,10 +303,11 @@ def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll
 
 			ual = ual_growth - actual_fund_growth
 
+			print("year: {}, month: {}, nc: {}, ual pay: {}, payroll: {}, ual: {}".format(year, i+1, calculated_normal_cost, ual_payment, monthly_payroll, ual))
 			#update monthly values
 			month += 1
 			monthly_contribution = monthly_contribution * inflation_monthly 
-			monthly_payroll = get_monthly_payroll(year, i, monthly_payroll, monthly_payroll_growthrate)
+			monthly_payroll = get_monthly_payroll(i, year, monthly_payroll, monthly_payroll_growthrate)
 
 			#accumulate yearly totals
 			pay += ual_payment
@@ -315,6 +319,7 @@ def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll
 		else:
 			payroll_total_annual = payroll_total[year]
 
+		#skeptical that the contribution rate is correct but it's not used anywhere so left as-is
 		data.append([pay, ual, contribution / payroll_total_annual, normal_cost])
 		year = year + 1
 
