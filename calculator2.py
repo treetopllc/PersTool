@@ -121,18 +121,42 @@ def get_contributions(month, year):
 	return base_contribution * 1.00287089871908 ** num_months
 
 
+def calculate_normal_cost(month, year):
+	nc = get_normal_cost(month, year)
+	calculated_contribution = get_contributions(month, year)
+	return nc * calculated_contribution
+
+
+def get_monthly_payroll(month, year, current, monthly_payroll_growthrate):
+	if year == 2021 and month == 5:
+		monthly_payroll = 930.803690708086
+	elif year == 2042 and month == 10:
+		monthly_payroll = 1939.03460093616
+	else:
+		monthly_payroll = current * monthly_payroll_growthrate
+	return monthly_payroll
+
+
 #Amortization period
-def calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_growthrate, month_val, year, payroll_total, normal_cost, monthly_normalcost_growthrate, ual_growth):
+def calculate_amortization(amperiod, ual, sual, RR, payroll_growthrate, month_val, year, payroll_total, ual_growth):
 	pay2019 = 1302.71
 	data = []
-	ual_growth_monthly = ual_growth ** (1/12)
 	paid = False
 	sual_list= [sual]
 
+	#monthly rates
+	ual_growth_monthly = RRinf_monthly = ual_growth ** (1/12)
+	monthly_payroll_growthrate = payroll_growthrate ** (1/12)
+	RR_monthly_actual = RR ** (1/12)
+
+	#initial values
 	#discount takes out interest rate over the full period of time
 	discount = (1 - (monthly_payroll_growthrate / RRinf_monthly) ** (amperiod * 12)) / (RRinf_monthly - monthly_payroll_growthrate)
 	ual_pay_monthly = ual / discount
-	normal_cost = normal_cost / month_val
+	month = 1
+	actual_fund_growth = needed_fund_growth = needed_fund_growth_init = ual_pay_monthly_init = ual_pay_monthly 
+	ual_growth = ual * RRinf_monthly
+	monthly_payroll = payroll_total[year] / month_val
 
 	while amperiod > 0:
 		if year >= 2120:
@@ -145,15 +169,8 @@ def calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_g
 		pay = 0
 		normal_cost_annual = 0
 		for i in range(0, 12):
-			if year > 2036:
-				monthly_payroll = payroll_total[2036] / month_val * monthly_payroll_growthrate ** ((year-2037) * 12 + i + 1)
-			else:
-				monthly_payroll = payroll_total[year] / 12
-
-			nc = get_normal_cost(i, year)
-			cr = get_contribution_rate(i, year)
-			calculated_contribution = get_contributions(i, year)
-			calculated_normal_cost = nc * calculated_contribution
+			calculated_normal_cost = calculate_normal_cost(i, year)
+			ual = ual_growth - actual_fund_growth
 
 			#accumulate the yearly totals
 			payroll += monthly_payroll
@@ -161,12 +178,18 @@ def calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_g
 			normal_cost_annual += calculated_normal_cost
 
 			#now update the values for each month
-			ual = ual * ual_growth_monthly - ual_pay_monthly
-			ual_pay_monthly = ual_pay_monthly * monthly_payroll_growthrate
+			ual_pay_monthly = ual_pay_monthly_init * monthly_payroll_growthrate ** month + ((needed_fund_growth * RRinf_monthly) - (actual_fund_growth * RR_monthly_actual))
+			actual_fund_growth = actual_fund_growth * RR_monthly_actual + ual_pay_monthly
+			needed_fund_growth = needed_fund_growth * RRinf_monthly + (needed_fund_growth_init * monthly_payroll_growthrate ** month)
+			ual_growth = ual_growth * RRinf_monthly
+			monthly_payroll = get_monthly_payroll(i, year, monthly_payroll, monthly_payroll_growthrate)
+			month += 1
+
 			if ual <= 0:
 				paid = True
 
-		contribution_rate = pay / payroll
+		#calculate and append annual totals
+		contribution_rate = (pay + normal_cost_annual) / payroll
 		data.append([pay, ual, contribution_rate, normal_cost_annual])
 		year = year + 1
 		amperiod = amperiod - 1
@@ -174,12 +197,18 @@ def calculate_amortization(amperiod, ual, sual, RRinf_monthly, monthly_payroll_g
 
 
 #contribution rate as a portion of payroll
-def calculate_contribution_rate(contribution_rate, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth):
+def calculate_contribution_rate(contribution_rate, ual, sual, RR, year, payroll_total, month_val, payroll_growthrate, ual_growth):
 	pay2019 = 1451.26973004236
 	data = []
-	#RRinf = RR + inflation - 1
-	RRinf = RR
-	ual_growth_monthly = ual_growth ** (1/12)
+
+	#monthly growth rates
+	ual_growth_monthly = RRinf_monthly = ual_growth ** (1/12)
+	monthly_payroll_growthrate = payroll_growthrate ** (1/12)
+	RR_monthly_actual = RR ** (1/12)
+
+	#initial values
+	monthly_payroll = payroll_total[2020] / month_val
+	month = 0
 	paid = False
 
 	while ual > 0:
@@ -190,56 +219,56 @@ def calculate_contribution_rate(contribution_rate, ual, sual, RR, inflation, yea
 
 		pay = 0
 		contribution = 0
-		normal_cost = 0
+		normal_cost_annual = 0
 		for i in range(0, 12):
-			if year <= 2036:
-				payroll = payroll_total[year]
-
 			if ual <= 0:
 				paid = True
-				print("Year: {}, month: {}".format(year, i+1))
-			if year > 2022:
-				monthly_payroll = (payroll_total[2022] / month_val * monthly_payroll_growthrate ** ((year-2022) * 12 + i)) #* contribution_rate
-			else:
-				monthly_payroll = (payroll_total[year] / month_val) * monthly_payroll_growthrate ** i
 
-			nc = get_normal_cost(i, year)
-			cr = get_contribution_rate(i, year)
-			calculated_contribution = get_contributions(i, year)
-			calculated_normal_cost = nc * calculated_contribution
 			monthly_contribution = monthly_payroll * contribution_rate
-			ual_payment = monthly_contribution - calculated_normal_cost
+			calculated_normal_cost = calculate_normal_cost(i, year)
+			ual_pay_monthly = monthly_contribution - calculated_normal_cost
+
 			if year == 2020 and i == 0:
-				ual = (ual - pay2019) * ual_growth
+				actual_fund_growth = ual_pay_monthly
+				ual_growth = ual * RRinf_monthly
 			else:
-				ual = ual * ual_growth_monthly - ual_payment
+				actual_fund_growth = actual_fund_growth * RR_monthly_actual + ual_pay_monthly
+				ual_growth = ual_growth * RRinf_monthly
+			ual = ual_growth - actual_fund_growth
 
-			pay += ual_payment
+			#accumulate annual totals
+			pay += ual_pay_monthly
 			contribution += monthly_contribution
-			normal_cost += calculated_normal_cost
+			normal_cost_annual += calculated_normal_cost
 
-		if year >= 2036:
-			payroll_total_annual = payroll_total[2036]
-		else:
-			payroll_total_annual = payroll_total[year]
+			#update monthly values
+			monthly_payroll = get_monthly_payroll(i, year, monthly_payroll, monthly_payroll_growthrate)
+			month += 1
 
-		data.append([pay, ual, contribution / payroll_total_annual, normal_cost])
+		data.append([pay, ual, contribution_rate, normal_cost_annual])
 		year = year + 1
 
 	return data, year, paid
 
 
-#contribution rate as a portion of payroll
-def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth):
+#contribution as a flat rate (plus inflation)
+def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll_total, month_val, payroll_growthrate, ual_growth):
 	year = 2020
 	pay2019 = 1451.26973004236
-	monthly_contribution = contribution / month_val
-	#RRinf = RR + inflation - 1
-	RRinf = RR
 	data = []
-	ual_growth_monthly = ual_growth ** (1/12)
-	paid = False
+
+	#monthly growthrates
+	ual_growth_monthly = RRinf_monthly = ual_growth ** (1/12)
+	monthly_payroll_growthrate = payroll_growthrate ** (1/12)
+	RR_monthly_actual = RR ** (1/12)
 	inflation_monthly = inflation ** (1/12)
+
+	#initial values
+	monthly_payroll = payroll_total[year] / month_val
+	ual_growth = ual
+	month = 0
+	monthly_contribution = contribution / month_val
+	paid = False
 
 	while ual > 0:
 		if year >= 2120:
@@ -249,39 +278,35 @@ def calculate_contribution(contribution, ual, sual, RR, inflation, year, payroll
 
 		pay = 0
 		contribution = 0
-		normal_cost = 0
+		normal_cost_annual = 0
+		payroll = 0
 		for i in range(0, 12):
-			if year <= 2036:
-				payroll = payroll_total[year]
 			if ual <= 0:
 				paid = True
-				print("Year: {}, month: {}".format(year, i+1))
-			if year > 2022:
-				monthly_payroll = (payroll_total[2022] / month_val * monthly_payroll_growthrate ** ((year-2022) * 12 + i)) #* contribution_rate
-			else:
-				monthly_payroll = (payroll_total[year] / month_val) * monthly_payroll_growthrate ** i
 
-			nc = get_normal_cost(i, year)
-			cr = get_contribution_rate(i, year)
-			calculated_contribution = get_contributions(i, year)
-			calculated_normal_cost = nc * calculated_contribution
-			monthly_contribution = (monthly_contribution - calculated_normal_cost) * inflation_monthly + calculated_normal_cost
-			ual_payment = monthly_contribution - calculated_normal_cost
+			calculated_normal_cost = calculate_normal_cost(i, year)
+			ual_pay_monthly = monthly_contribution - calculated_normal_cost
+			ual_growth = ual_growth * RRinf_monthly
 			if year == 2020 and i == 0:
-				ual = (ual - pay2019) * ual_growth
+				actual_fund_growth = ual_pay_monthly
 			else:
-				ual = ual * ual_growth_monthly - ual_payment
+				actual_fund_growth = actual_fund_growth * RR_monthly_actual + ual_pay_monthly
+			ual = ual_growth - actual_fund_growth
 
-			pay += ual_payment
+			#accumulate yearly totals
+			pay += ual_pay_monthly
 			contribution += monthly_contribution
-			normal_cost += calculated_normal_cost
+			normal_cost_annual += calculated_normal_cost
+			payroll += monthly_payroll
 
-		if year >= 2036:
-			payroll_total_annual = payroll_total[2036]
-		else:
-			payroll_total_annual = payroll_total[year]
+			#update monthly values
+			monthly_contribution = monthly_contribution * inflation_monthly 
+			monthly_payroll = get_monthly_payroll(i, year, monthly_payroll, monthly_payroll_growthrate)
+			month += 1
 
-		data.append([pay, ual, contribution / payroll_total_annual, normal_cost])
+		#calculate and append annual totals
+		contribution_rate = (pay + normal_cost_annual) / payroll
+		data.append([pay, ual, contribution_rate, normal_cost_annual])
 		year = year + 1
 
 	return data, year, paid
@@ -354,10 +379,8 @@ def main():
 	year = 2020
 
 	# some constant monthly growthrates, we assume 3.5% per year for these
-	monthly_payroll_growthrate = monthly_normalcost_growthrate = 1.035 ** (1/12)
-	#RRinf = RR + inflation - 1
-	RRinf = RR
-	RRinf_monthly = RRinf ** (1/12)
+	payroll_growthrate = 1.035
+	monthly_payroll_growthrate = 1.035 ** (1/12)
 	# UAL should continue to grow at a constant rate regardless of inflation and/or RR
 	ual_growth = 1.072
 	# this is the "value" of the number of months in a year accounting for payroll growthrate. weird, I know.
@@ -368,14 +391,14 @@ def main():
 		month_val += month_interest
 
 	if question == 1:
-		data, end_year, paid = calculate_amortization(question_param, ual, sual, RRinf_monthly, monthly_payroll_growthrate, month_val, year, payroll_total, normal_cost, monthly_normalcost_growthrate, ual_growth)
+		data, end_year, paid = calculate_amortization(question_param, ual, sual, RR, payroll_growthrate, month_val, year, payroll_total, ual_growth)
 	elif question == 2:
-		data, end_year, paid = calculate_contribution_rate(question_param, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth)
+		data, end_year, paid = calculate_contribution_rate(question_param, ual, sual, RR, year, payroll_total, month_val, payroll_growthrate, ual_growth)
 	elif question == 3:
-		data, end_year, paid = calculate_contribution(question_param, ual, sual, RR, inflation, year, payroll_total, month_val, monthly_payroll_growthrate, RRinf_monthly, ual_growth)
+		data, end_year, paid = calculate_contribution(question_param, ual, sual, RR, inflation, year, payroll_total, month_val, payroll_growthrate, ual_growth)
 
 	if paid == False or end_year >= 2060:
-		return paid
+		return False
 
 	sual_list, tax_list, sualend_year = raisethemoney(sual, tax, RR, end_year, inflation)
 	data = np.asarray(data)
@@ -394,7 +417,7 @@ def main():
 		data = np.pad(data, ((0, 15 -  data.shape[0]),(0,0)), 'constant')
 
 	plotstuff(data, UAL_hist, normalcost_hist, UALpayment_hist, POB_hist, pob)
-	return paid
+	return True
 
 if __name__=="__main__":
 	main()
