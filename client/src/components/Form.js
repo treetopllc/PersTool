@@ -10,6 +10,7 @@ import {
   Button,
   Form,
   Label,
+  Popup,
 } from 'semantic-ui-react';
 import {
   number,
@@ -27,6 +28,12 @@ const StyledLabel = styled.label`
   small {
     margin: 10px;
     display: inline-block;
+  }
+
+  h4 > button {
+    float: right;
+    padding: 0.5em !important;
+    margin-right: 10px !important;
   }
 `;
 
@@ -46,6 +53,11 @@ const Row = styled.div`
 
   &:last-of-type {
     margin-bottom: 50px;
+  }
+
+  > small {
+    margin-left: 10px;
+    display: inline-block;
   }
 
 `;
@@ -146,8 +158,22 @@ const TestForm = (props) => {
         {questionValue === 1 && (
           <div>
             <StyledLabel htmlFor="amperiod">
-              <h4>Years:</h4>
-              Make the amortization pay-down timeline faster or slower to see how it changes the payment plan.
+              <h4>
+                Years:
+                <Popup
+                  trigger={<Button type="button" size="mini" icon="help" />}
+                  position="left center"
+                  wide
+                  basic
+                >
+                  <Popup.Content>
+                    <small>The period of time over which the obligation is funded is called Amortization. Extending the time period provides near-term economic relief for local governments with lower monthly payments, but it increases the total amount that oregon will pay in the long run.  In 2019, the legislature extended the amortization period to 22 years to require lower payments from local employers over the next several years.</small>
+                    <br />
+                    <br />
+                    <small><strong className="green">Make the amortization pay-down timeline faster or slower to see how it changes the payment plan.</strong></small>
+                  </Popup.Content>
+                </Popup>
+              </h4>
 
               <StyledButtonGroup>
                 <Field
@@ -193,6 +219,19 @@ const TestForm = (props) => {
             <StyledLabel htmlFor="contribution_rate">
               <h4>
                 Contribution Rate:
+                <Popup
+                  trigger={<Button type="button" size="mini" icon="help" />}
+                  position="left center"
+                  wide
+                  basic
+                >
+                  <Popup.Content>
+                    <small>Every Oregon public employer (such as a schools, fire department, public health center or community college)  pays a different monthly amount based on their total payroll. The average contribution rate is projected to be 10% of payroll when employers cover only the costs of current benefits –– not past obligations.  However, past obligations represent a significant burden today. In 2020 the majority of public employers will pay more than 24% of payroll and some will pay more than 35%. These rates are expected to increase over the next several years.</small>
+                    <br />
+                    <br />
+                    <small><strong className="green">Play around with contribution levels to see how they affect the payment schedule. </strong></small>
+                  </Popup.Content>
+                </Popup>
                 <StyledRightLabel>
                   { Math.round(contributionRateValue * 100) }
                   %
@@ -233,7 +272,22 @@ const TestForm = (props) => {
         {questionValue === 3 && (
           <div>
             <StyledLabel htmlFor="pay">
-              <h4>Pay:</h4>
+              <h4>
+                Pay:
+                <Popup
+                  trigger={<Button type="button" size="mini" icon="help" />}
+                  position="left center"
+                  wide
+                  basic
+                >
+                  <Popup.Content>
+                    <small>The only real “solution” to Oregon’s unfunded liability is to pay for it. Statewide, across all levels of government, combined investments in PERS benefits and payments for the unfunded liability totaled more than $2B in 2019. Directing new money to pay down the liability more quickly has two benefits –- it reduces the longterm cost and it lowers monthly payments required of schools and other local governments. However, doing so is complex. 30% of the obligation is held by the state, 30% by schools, and 40% by cities, counties and special service districts. Each of these has a different tax base. Direct funding could be a result of new revenue through a tax, or of redirecting funding from existing programs. The kinds of taxes that could deliver revenue at this level could be property taxes, a sales tax, or an additional corporate tax. In 2019, Oregon passed a $1B corporate tax to fund schools.</small>
+                    <br />
+                    <br />
+                    <small><strong className="green">Use these options to see how different lump sum investments change the math for Oregon’s liability.</strong></small>
+                  </Popup.Content>
+                </Popup>
+              </h4>
               <StyledButtonGroup>
                 <Field
                   name="pay"
@@ -283,7 +337,30 @@ const TestForm = (props) => {
 
       <Row>
         <StyledLabel htmlFor="RR">
-          <h4>Rate of Return:</h4>
+          <h4>
+            Rate of Return:
+            <Popup
+              trigger={<Button type="button" size="mini" icon="help" />}
+              position="top right"
+              wide
+              basic
+            >
+              <Popup.Content>
+                <small>
+                  The State uses a formula to determine how much public employers need to contribute to the PERS Fund every month, based in part on a key assumption: How much will investments of those funds return on average? The current formula is based on the assumption that investments will return 7.2% annually.
+                  <br />
+                  <br />
+                  Where does this number come from? The PERS Board makes this decision with input from a variety of sources, including the actuarial group, Milliman. According the Milliman’s modeling, an average return of 7.2% over the next couple decades is possible but is not the most likely scenario. According to their estimates lower returns on investment are more likely.
+                  <br />
+                  <br />
+                  Why would the state choose a rate of return that is higher than the actuary’s modeled projection? There may be many reasons. However, one part of the equation is that lower returns on investments must be balanced by higher monthly payments from local governments. Otherwise the UAL will increase dramatically. If the PERS Board sets the expected return rate lower, they must also set the monthly payment rate higher.
+                </small>
+                <br />
+                <br />
+                <small><strong className="green">You can use these options to visualize how different rates of return might impact Oregon’s required payments over time. </strong></small>
+              </Popup.Content>
+            </Popup>
+          </h4>
           <StyledButtonGroup>
             <Field
               name="RR"
@@ -384,6 +461,9 @@ const TestForm = (props) => {
                 label="Sequestered Liability"
                 component={SliderField}
               />
+              <small>The legislature has discussed but has not acted on the idea of setting aside, or “sequestering” some part of the UAL that is currently the responsibility of local governments. Through an inter-governmental agreement, the state could agree to take this portion of the obligations, which would provide immediate and direct relief to struggling local public employers. The sequestered obligation could be financed differently than the remaining local obligations –– for instance, legislators could set the amortization period shorter or longer, or could set earnings expectations higher or lower without impacting the payment plans for local entities. This concept would result in a larger obligation for the state itself, and would require identifying a source of funding. Use this slider to set aside some portion of the UAL owed by local governments.
+<br/><br/>
+What is a meaningful choice? There might be several rational approaches to picking a portion of the UAL to sequester. As an example, the amount needed to set aside to reduce employer contributions to about 15% of payroll average is $15B. Or, the part of the UAL that is attributable to the market crash of the Great Recession is about $14B. The UAL that is attributable to people who are already retired or inactive employees is about $21B. </small>
             </StyledLabel>
           </Row>
         </Fragment>
