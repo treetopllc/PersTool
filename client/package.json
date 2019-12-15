@@ -9,7 +9,7 @@
     "react-dom": "^16.8.6",
     "react-redux": "^7.0.3",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.0.0",
+    "react-scripts": "^3.3.0",
     "react-semantic-ui-range": "^0.7.0",
     "redux-form": "^8.2.0",
     "redux-form-validators": "^3.3.2",
@@ -44,7 +44,6 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-jsx-a11y": "^6.2.1",

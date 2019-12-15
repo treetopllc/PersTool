@@ -83,10 +83,14 @@ function App() {
 
   const handleClose = () => setState({ modalOpen: false });
 
-  // axios.defaults.baseURL = 'https://perstool.herokuapp.com';
+  // uncomment for production (comment out line 90)
+  axios.defaults.baseURL = 'https://perstool.herokuapp.com';
+
+  // uncomment for development
+  // axios.defaults.baseURL = 'http://127.0.0.1:8000';
   const handleSubmit = values => axios.request({
     method: 'post',
-    url: 'http://127.0.0.1:8000/api',
+    url: '/api',
     data: { data: values },
   })
     .then((response) => {
